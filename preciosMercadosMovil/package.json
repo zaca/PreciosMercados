@@ -1,0 +1,23 @@
+{
+    "name": "com.madmax.preciosmercados",
+    "version": "1.0.0",
+    "displayName": "preciosMercadosMovil",
+    "cordova": {
+        "platforms": [
+            "android",
+            "browser",
+            "ios"
+        ],
+        "plugins": {
+            "cordova-plugin-whitelist": {},
+            "cordova-plugin-device-orientation": {}
+        }
+    },
+    "dependencies": {
+        "cordova-android": "^6.2.3",
+        "cordova-browser": "^4.1.0",
+        "cordova-ios": "^4.4.0",
+        "cordova-plugin-device-orientation": "^1.0.7",
+        "cordova-plugin-whitelist": "1"
+    }
+}
