@@ -1,5 +1,6 @@
 package ar.com.concentrador.extractor.impl;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +17,7 @@ public class AbastoCentralMDQExtractor extends BaseExtractor {
 	private static final String CODE_EXTRACTOR = "01";
 	private static final String URL = "http://www.abastocentralmdp.com/lista.php?id_rubro=3";
 	private static final char[] CHAR_TO_REMOVE = {'$', '-'}; 
+	private static final Charset CHARSET = Charset.forName("ISO-8859-1");
 	
 	@Override
 	public String getCodeExtractor() {
@@ -31,7 +33,7 @@ public class AbastoCentralMDQExtractor extends BaseExtractor {
 		List<Quotes> information = new ArrayList<>();
 		Date date = new Date();
 		byte [] data = this.call(URL);
-		Document doc = Jsoup.parse(new String(data));
+		Document doc = Jsoup.parse(new String(data, CHARSET));
 		
 	    for (Element table : doc.select("table > tbody > tr > td > table")) {
 	        for (Element row : table.select("tr")) {

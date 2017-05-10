@@ -126,7 +126,7 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 	            q.setCode(formatCodeValue(formatValueFromCell(nextRow.getCell(initCol))) + " " + formatValueFromCell(nextRow.getCell(initCol+1)));
 	            q.setSource(formatDescriptionValue(formatValueFromCell(nextRow.getCell(initCol+2))));
 	            q.setPackageDes(this.formatPackage(formatValueFromCell(nextRow.getCell(initCol+3))));
-	            q.setValue(formatDescriptionValue(formatValueFromCell(nextRow.getCell(initCol+4)).replace(".00", "")));
+	            q.setValue(formatDescriptionValue(formatValueFromCell(nextRow.getCell(initCol+4)).replace(".0", "")));
 	            q.setMaxValue(formatMoneyValue(formatValueFromCell(nextRow.getCell(initCol+8)), CHAR_TO_REMOVE));
 	            q.setMinValue(formatMoneyValue(formatValueFromCell(nextRow.getCell(initCol+10)), CHAR_TO_REMOVE));   
 	            q.setDescription(formatDescriptionValue(q.getCode(), q.getPackageDes(), q.getValue()));
