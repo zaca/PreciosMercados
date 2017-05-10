@@ -28,7 +28,6 @@ public class QuotationEndpoint {
 		if (code == null) {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
-		
 		logger.debug("servicio de testing...");
 		AbastoCentralMDQExtractor ex = new AbastoCentralMDQExtractor();
 		

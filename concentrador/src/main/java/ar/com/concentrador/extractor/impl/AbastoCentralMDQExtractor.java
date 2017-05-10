@@ -41,7 +41,10 @@ public class AbastoCentralMDQExtractor extends BaseExtractor {
 	            q.setCodeExtractor(CODE_EXTRACTOR);
 	            q.setDate(date);
 	            q.setCode(formatCodeValue(tds.get(0).text()));
-	            q.setDescription(formatDescriptionValue(tds.get(2).text(), tds.get(3).text()));
+	            q.setDescription(formatDescriptionValue(formatCodeValue(tds.get(0).text()), tds.get(2).text(), tds.get(3).text()));
+	            q.setSource(formatDescriptionValue(tds.get(1).text()));
+	            q.setPackageDes(formatDescriptionValue(tds.get(2).text()));
+	            q.setValue(formatDescriptionValue(tds.get(3).text()));
 	            q.setMaxValue(formatMoneyValue(tds.get(4).text(), CHAR_TO_REMOVE));
 	            q.setMinValue(formatMoneyValue(tds.get(5).text(), CHAR_TO_REMOVE));
 	            

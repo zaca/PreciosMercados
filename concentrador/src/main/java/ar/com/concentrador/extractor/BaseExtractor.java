@@ -49,6 +49,9 @@ public abstract class BaseExtractor {
 	}
 	
 	protected static String formatCodeValue(String value) {
+		if (value == null) {
+			value = "";
+		}
 		return value.trim().toUpperCase();
 	}
 	
