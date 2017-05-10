@@ -17,7 +17,7 @@
  * under the License.
  */
 var app = {
-		
+
 	// Application Constructor
 	initialize : function() {
 		document.addEventListener('deviceready', this.onDeviceReady.bind(this),
@@ -32,33 +32,30 @@ var app = {
 		// this.receivedEvent('deviceready');
 		callButton = document.getElementById("callButton");
 		callButton.addEventListener('click', this.callButtonClick, false);
-		
+
 		filterContainer = document.getElementById("filtersContainer");
 		fillFilters(filterContainer);
+
+		// var select = document.getElementById("filterSelect");
+		// select.addEventListener("change", filtersChange, false);
 	},
 
 	// Update DOM on a Received Event
 	receivedEvent : function(id) {
-		// var parentElement = document.getElementById(id);
-		// var listeningElement = parentElement.querySelector('.listening');
-		// var receivedElement = parentElement.querySelector('.received');
-
-		// listeningElement.setAttribute('style', 'display:none;');
-		// receivedElement.setAttribute('style', 'display:block;');
-
 		console.log('Received Event: ' + id);
 	},
 
 	callButtonClick : function() {
 		container = document.getElementById("serviceResult");
-		var response = callRestService(container);
+		filter = document.getElementById("filterSelect").value;
+		var response = callRestService(container, filter);
 	}
 
 };
 
 app.initialize();
 
-function callRestService(container) {
+function fillFilters(container) {
 	var response = "";
 	var url = "http://34.204.253.238:8080/concentrador/rest/quotation/byCode/123";
 	var xhr = new XMLHttpRequest();
@@ -66,7 +63,29 @@ function callRestService(container) {
 		if (xhr.readyState === 4) {
 			if (xhr.status === 200) {
 				lista = JSON.parse(this.responseText);
-				visualization(lista, container);
+				drawFilters(lista, container);
+			} else {
+				container.innerHTML = xhr.statusText;
+			}
+		}
+	};
+	try {
+		xhr.open('GET', url, true);
+		xhr.send();
+	} catch (err) {
+		container.innerHTML = err.message;
+	}
+}
+
+function callRestService(container, value) {
+	var response = "";
+	var url = "http://34.204.253.238:8080/concentrador/rest/quotation/byCode/123";
+	var xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = function() {
+		if (xhr.readyState === 4) {
+			if (xhr.status === 200) {
+				lista = JSON.parse(this.responseText);
+				visualization(lista, container, value);
 			} else {
 				container.innerHTML = xhr.statusText;
 			}
@@ -80,61 +99,80 @@ function callRestService(container) {
 	}
 };
 
-function visualization(arr, element) {
+function visualization(arr, element, value) {
+	element.innerHTML = "<h2>Mercado: Mar del Plata</h2>";
 	var table = document.createElement("TABLE");
-    table.setAttribute("id", "productsTable");
-    table.setAttribute('class', 'contentTable');
-    element.appendChild(table);
-    
-    /*Cabecera*/
-    line = document.createElement("TR");
-    line.setAttribute('class', 'contentLineHeader');
+	table.setAttribute("id", "productsTable");
+	table.setAttribute('class', 'contentTable');
+	element.appendChild(table);
+
+	/* Cabecera */
+	line = document.createElement("TR");
+	line.setAttribute('class', 'contentLineHeader');
 	table.appendChild(line);
 
 	td1 = document.createElement("TD");
 	cellContent1 = document.createTextNode("Descripcion");
 	td1.appendChild(cellContent1);
 	line.appendChild(td1);
-	
+
 	td2 = document.createElement("TD");
 	cellContent2 = document.createTextNode("Precio maximo");
 	td2.appendChild(cellContent2);
 	line.appendChild(td2);
-	
+
 	td3 = document.createElement("TD");
 	cellContent3 = document.createTextNode("Precio minimo");
 	td3.appendChild(cellContent3);
 	line.appendChild(td3);
-	
+
 	td4 = document.createElement("TD");
 	cellContent4 = document.createTextNode("Zona");
 	td4.appendChild(cellContent4);
 	line.appendChild(td4);
-    
-    /*Contenido*/
-    for (i = 0; i < arr.length && i < 10; i++) {
-    	line = document.createElement("TR");
-    	table.appendChild(line);
 
-    	td1 = document.createElement("TD");
-    	cellContent1 = document.createTextNode(arr[i].description);
-    	td1.appendChild(cellContent1);
-    	line.appendChild(td1);
-    	
-    	td2 = document.createElement("TD");
-    	cellContent2 = document.createTextNode(arr[i].maxValue);
-    	td2.appendChild(cellContent2);
-    	line.appendChild(td2);
-    	
-    	td3 = document.createElement("TD");
-    	cellContent3 = document.createTextNode(arr[i].minValue);
-    	td3.appendChild(cellContent3);
-    	line.appendChild(td3);
-    	
-    	td4 = document.createElement("TD");
-    	cellContent4 = document.createTextNode(arr[i].source);
-    	td4.appendChild(cellContent4);
-    	line.appendChild(td4);
-    }
+	/* Contenido */
+	for (i = 0; i < arr.length; i++) {
+		if (arr[i].code == value) {
+			line = document.createElement("TR");
+			table.appendChild(line);
+
+			td1 = document.createElement("TD");
+			cellContent1 = document.createTextNode(arr[i].description);
+			td1.appendChild(cellContent1);
+			line.appendChild(td1);
+
+			td2 = document.createElement("TD");
+			cellContent2 = document.createTextNode(arr[i].maxValue);
+			td2.appendChild(cellContent2);
+			line.appendChild(td2);
+
+			td3 = document.createElement("TD");
+			cellContent3 = document.createTextNode(arr[i].minValue);
+			td3.appendChild(cellContent3);
+			line.appendChild(td3);
+
+			td4 = document.createElement("TD");
+			cellContent4 = document.createTextNode(arr[i].source);
+			td4.appendChild(cellContent4);
+			line.appendChild(td4);
+		}
+	}
+}
+
+function drawFilters(arr, element) {
+	var select = document.getElementById("filterSelect");
+	var elemento = "";
+	for (i = 0; i < arr.length; i++) {
+		if (elemento != arr[i].description) {
+			var opcion = document.createElement("option");
+			opcion.setAttribute("value", arr[i].code);
+			var texto = document.createTextNode(arr[i].code);
+			opcion.appendChild(texto);
+			select.appendChild(opcion);
+			elemento = arr[i].description;
+		}
+	}
+	element.appendChild(select);
 };
 
