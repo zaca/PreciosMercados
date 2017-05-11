@@ -44,6 +44,8 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 	private static final String URL = "http://www.mercadocentral.gob.ar/sites/default/files/precios_mayoristas/PM-Hortalizas-%s.zip";
 	private static final int BUFFER = 2048;
 	private static final char[] CHAR_TO_REMOVE = {};
+	private static final String CODE_MARKET = "BSAS";
+	
 	private Map<String, String> mapPackage;
 	private Map<Integer, String> mapMonth;
 
@@ -89,6 +91,11 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 	public String getCodeExtractor() {
 		return CODE_EXTRACTOR;
 	}
+	
+	@Override
+	public String getMarket() {
+		return CODE_MARKET;
+	}
 
 	@Override
 	public List<Quotes> getQuotes() {
@@ -101,22 +108,33 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 
 		Calendar c = Calendar.getInstance();
 
+		String compositeUrl = null;
 		byte[] data = null;
 		int i = 1;
+
 		while (i < 4 && data == null) {
 			c.add(Calendar.DAY_OF_MONTH, -1);
 
 			String year = String.valueOf(c.get(Calendar.YEAR));
 			String month = mapMonth.get(c.get(Calendar.MONTH) + 1);
-			String day = ("0" + c.get(Calendar.DAY_OF_MONTH)).replace("00", "0");
+			String day = String.valueOf(c.get(Calendar.DAY_OF_MONTH));
+			
+			if (day.length() == 1) {
+				day = "0" + day; 
+			}
 
-			String compositeUrl = String.format(URL, day + "-" + month + "-" + year);
+			compositeUrl = String.format(URL, day + "-" + month + "-" + year);
 			try {
 				data = this.call(compositeUrl);
+				
 			} catch (Exception e) {
-				// TODO: handle exception
+				/* TODO: VER */
 			}
 			i++;
+		}
+		
+		if (data == null) {
+			throw new RuntimeException("No se pudo recuperar la informacion de:" + compositeUrl);
 		}
 
 		Workbook workbook = convertBIFF2To8(this.extractCompress(data));
@@ -130,9 +148,7 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 				Row nextRow = iterator.next();
 				int initCol = nextRow.getFirstCellNum();
 
-				Quotes q = new Quotes();
-				q.setCodeExtractor(this.getMercado());
-				q.setCodeExtractor(CODE_EXTRACTOR);
+				Quotes q = createQuotes();
 				q.setDate(date);
 				q.setCode(formatCodeValue(formatValueFromCell(nextRow.getCell(initCol))) + " "
 						+ formatValueFromCell(nextRow.getCell(initCol + 1)));
@@ -583,10 +599,5 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 		public short getSid() {
 			return sid;
 		}
-	}
-
-	@Override
-	public String getMercado() {
-		return "BSAS";
 	}
 }

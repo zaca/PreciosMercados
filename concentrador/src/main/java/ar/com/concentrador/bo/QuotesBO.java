@@ -5,7 +5,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -58,11 +57,13 @@ public class QuotesBO {
 			
 		} else if (this.listQuotes==null) {
 			this.executeExtractors();
+			
 		} else {
 			if (logger.isInfoEnabled()) {
 				this.logger.info("**** Recuperando desde cache. ****");
 			}
 		}
+		
 		List<Quotes> newListQuotes = new ArrayList<>();
 		for(List<Quotes> elements:this.listQuotes.values()){
 			newListQuotes.addAll(elements);
@@ -79,14 +80,17 @@ public class QuotesBO {
 		if(this.listQuotes == null){
 			this.listQuotes = new HashMap<>();	
 		}
+		
 		for(BaseExtractor base: this.extractors) {
 			try{
-				this.listQuotes.put(base.getMercado(),base.getQuotes());				
-			}catch (Exception e) {
-				logger.error("Extractor mercado " + base.getMercado() + " extractor " + base.getCodeExtractor(), e);
-			}
-			if (logger.isInfoEnabled()) {
-				this.logger.info("Recuperando desde el extractor: " + base.getCodeExtractor());
+				
+				this.listQuotes.put( base.getCodeExtractor(), base.getQuotes());
+				if (logger.isInfoEnabled()) {
+					this.logger.info("Recuperando desde el extractor: " + base.getCodeExtractor());
+				}
+				
+			} catch (Exception e) {
+				logger.error("Extractor mercado " + base.getMarket() + " extractor " + base.getCodeExtractor(), e);
 			}
 		}
 		this.day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);

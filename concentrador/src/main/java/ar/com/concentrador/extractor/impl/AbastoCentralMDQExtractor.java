@@ -15,6 +15,7 @@ import ar.com.concentrador.model.Quotes;
 
 public class AbastoCentralMDQExtractor extends BaseExtractor {
 	private static final String CODE_EXTRACTOR = "01";
+	private static final String CODE_MARKET = "MDQ";
 	private static final String URL = "http://www.abastocentralmdp.com/lista.php?id_rubro=3";
 	private static final char[] CHAR_TO_REMOVE = {'$', '-'}; 
 	private static final Charset CHARSET = Charset.forName("ISO-8859-1");
@@ -23,6 +24,11 @@ public class AbastoCentralMDQExtractor extends BaseExtractor {
 	public String getCodeExtractor() {
 		return CODE_EXTRACTOR;
 	}
+	
+	@Override
+	public String getMarket() {
+		return CODE_MARKET;
+	}	
 
 	@Override
 	public List<Quotes> getQuotes() {
@@ -39,9 +45,7 @@ public class AbastoCentralMDQExtractor extends BaseExtractor {
 	        for (Element row : table.select("tr")) {
 	            Elements tds = row.select("td");
 	            
-	            Quotes q = new Quotes();
-	            q.setCodeExtractor(this.getMercado());
-	            q.setCodeExtractor(CODE_EXTRACTOR);
+	            Quotes q = createQuotes();
 	            q.setDate(date);
 	            q.setCode(formatCodeValue(tds.get(0).text()));
 	            q.setDescription(formatDescriptionValue(formatCodeValue(tds.get(0).text()), tds.get(2).text(), tds.get(3).text()));
@@ -58,8 +62,5 @@ public class AbastoCentralMDQExtractor extends BaseExtractor {
 		return information;
 	}
 
-	@Override
-	public String getMercado() {
-		return "MDQ";
-	}
+
 }

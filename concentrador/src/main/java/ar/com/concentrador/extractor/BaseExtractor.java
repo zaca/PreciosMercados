@@ -13,11 +13,10 @@ import ar.com.concentrador.model.Quotes;
 public abstract class BaseExtractor {
 	private static final String USER_AGENT = "Mozilla/5.0";
 	private static final int TIME_OUT_SECONDS = 60;
-	
+
+	public abstract String getMarket();
 	public abstract String getCodeExtractor();
 	public abstract List<Quotes> getQuotes();
-	
-	public abstract String getMercado();
 	
 	protected byte[] call(String stringUrl) {
 		HttpURLConnection con = null;
@@ -48,6 +47,13 @@ public abstract class BaseExtractor {
 				con.disconnect();
 			}
 		}
+	}
+	
+	protected Quotes createQuotes() {
+		Quotes q = new Quotes();
+		q.setMarket(this.getMarket());
+		q.setCodeExtractor(this.getCodeExtractor());
+		return q;
 	}
 	
 	protected static String formatCodeValue(String value) {
