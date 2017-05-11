@@ -40,6 +40,7 @@ public class AbastoCentralMDQExtractor extends BaseExtractor {
 	            Elements tds = row.select("td");
 	            
 	            Quotes q = new Quotes();
+	            q.setCodeExtractor(this.getMercado());
 	            q.setCodeExtractor(CODE_EXTRACTOR);
 	            q.setDate(date);
 	            q.setCode(formatCodeValue(tds.get(0).text()));
@@ -55,5 +56,10 @@ public class AbastoCentralMDQExtractor extends BaseExtractor {
 	    }		
 		
 		return information;
+	}
+
+	@Override
+	public String getMercado() {
+		return "MDQ";
 	}
 }

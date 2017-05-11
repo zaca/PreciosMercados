@@ -46,30 +46,30 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 	private static final char[] CHAR_TO_REMOVE = {};
 	private Map<String, String> mapPackage;
 	private Map<Integer, String> mapMonth;
-	
+
 	public MecadoCentralBSASExtractor() {
 		this.mapPackage = new HashMap<>();
-		this.mapPackage.put("AP","ARGEN-POOL");
-		this.mapPackage.put("A","ATADO");
-		this.mapPackage.put("BA","BANDEJA");
-		this.mapPackage.put("BO","BOLSA");
-		this.mapPackage.put("CA","CAJA");
-		this.mapPackage.put("CJ","CAJON");
-		this.mapPackage.put("CT","CAJA/Telescop");
-		this.mapPackage.put("GR","GRANEL");
-		this.mapPackage.put("IF","IFCO");
-		this.mapPackage.put("JA","JAULA");
-		this.mapPackage.put("MA","MARK 4");
-		this.mapPackage.put("PE","PERDIDO");
-		this.mapPackage.put("PL","PLAFOM");
-		this.mapPackage.put("PQ","PAQUETE");
-		this.mapPackage.put("RT","RISTRA 100");
-		this.mapPackage.put("SM","SAN MARTIN");
-		this.mapPackage.put("ST","STANDARTD");
-		this.mapPackage.put("SU","SUDAFRICANO");
-		this.mapPackage.put("TO","TORO");
-		this.mapPackage.put("TT","TORITO");
-		
+		this.mapPackage.put("AP", "ARGEN-POOL");
+		this.mapPackage.put("A", "ATADO");
+		this.mapPackage.put("BA", "BANDEJA");
+		this.mapPackage.put("BO", "BOLSA");
+		this.mapPackage.put("CA", "CAJA");
+		this.mapPackage.put("CJ", "CAJON");
+		this.mapPackage.put("CT", "CAJA/Telescop");
+		this.mapPackage.put("GR", "GRANEL");
+		this.mapPackage.put("IF", "IFCO");
+		this.mapPackage.put("JA", "JAULA");
+		this.mapPackage.put("MA", "MARK 4");
+		this.mapPackage.put("PE", "PERDIDO");
+		this.mapPackage.put("PL", "PLAFOM");
+		this.mapPackage.put("PQ", "PAQUETE");
+		this.mapPackage.put("RT", "RISTRA 100");
+		this.mapPackage.put("SM", "SAN MARTIN");
+		this.mapPackage.put("ST", "STANDARTD");
+		this.mapPackage.put("SU", "SUDAFRICANO");
+		this.mapPackage.put("TO", "TORO");
+		this.mapPackage.put("TT", "TORITO");
+
 		this.mapMonth = new HashMap<>();
 		this.mapMonth.put(1, "Ene");
 		this.mapMonth.put(2, "Feb");
@@ -84,7 +84,7 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 		this.mapMonth.put(11, "Nov");
 		this.mapMonth.put(12, "Dic");
 	}
-	
+
 	@Override
 	public String getCodeExtractor() {
 		return CODE_EXTRACTOR;
@@ -94,118 +94,137 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 	public List<Quotes> getQuotes() {
 		return this.extract();
 	}
-	
+
 	private List<Quotes> extract() {
 		List<Quotes> information = new ArrayList<>();
 		Date date = new Date();
-		
+
 		Calendar c = Calendar.getInstance();
-		c.add(Calendar.DAY_OF_MONTH, -1);
-		
-		String year = String.valueOf(c.get(Calendar.YEAR));
-		String month = mapMonth.get(c.get(Calendar.MONTH) + 1);
-		String day = ("0" +c.get(Calendar.DAY_OF_MONTH)).replace("00", "0");
-		
-		String compositeUrl = String.format(URL, day + "-" + month + "-" + year);
-		byte [] data = this.call(compositeUrl);
-		
-		Workbook workbook = convertBIFF2To8( this.extractCompress(data));
-			
+
+		byte[] data = null;
+		int i = 1;
+		while (i < 4 && data == null) {
+			c.add(Calendar.DAY_OF_MONTH, -1);
+
+			String year = String.valueOf(c.get(Calendar.YEAR));
+			String month = mapMonth.get(c.get(Calendar.MONTH) + 1);
+			String day = ("0" + c.get(Calendar.DAY_OF_MONTH)).replace("00", "0");
+
+			String compositeUrl = String.format(URL, day + "-" + month + "-" + year);
+			try {
+				data = this.call(compositeUrl);
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+			i++;
+		}
+
+		Workbook workbook = convertBIFF2To8(this.extractCompress(data));
+
 		try {
-			
-	        Sheet firstSheet = workbook.getSheetAt(0);
-	        Iterator<Row> iterator = firstSheet.iterator();
-	        iterator.next();
-	        while (iterator.hasNext()) {
-	        	Row nextRow = iterator.next();
-	        	int initCol = nextRow.getFirstCellNum();
-	            
-	            Quotes q = new Quotes();
-	            q.setCodeExtractor(CODE_EXTRACTOR);
-	            q.setDate(date);
-	            q.setCode(formatCodeValue(formatValueFromCell(nextRow.getCell(initCol))) + " " + formatValueFromCell(nextRow.getCell(initCol+1)));
-	            q.setSource(formatDescriptionValue(formatValueFromCell(nextRow.getCell(initCol+2))));
-	            q.setPackageDes(this.formatPackage(formatValueFromCell(nextRow.getCell(initCol+3))));
-	            q.setValue(formatDescriptionValue(formatValueFromCell(nextRow.getCell(initCol+4)).replace(".0", "")));
-	            q.setMaxValue(formatMoneyValue(formatValueFromCell(nextRow.getCell(initCol+8)), CHAR_TO_REMOVE));
-	            q.setMinValue(formatMoneyValue(formatValueFromCell(nextRow.getCell(initCol+10)), CHAR_TO_REMOVE));   
-	            q.setDescription(formatDescriptionValue(q.getCode(), q.getPackageDes(), q.getValue()));
-	            
-	            information.add(q);
-	        }
-	      
+
+			Sheet firstSheet = workbook.getSheetAt(0);
+			Iterator<Row> iterator = firstSheet.iterator();
+			iterator.next();
+			while (iterator.hasNext()) {
+				Row nextRow = iterator.next();
+				int initCol = nextRow.getFirstCellNum();
+
+				Quotes q = new Quotes();
+				q.setCodeExtractor(this.getMercado());
+				q.setCodeExtractor(CODE_EXTRACTOR);
+				q.setDate(date);
+				q.setCode(formatCodeValue(formatValueFromCell(nextRow.getCell(initCol))) + " "
+						+ formatValueFromCell(nextRow.getCell(initCol + 1)));
+				q.setSource(formatDescriptionValue(formatValueFromCell(nextRow.getCell(initCol + 2))));
+				q.setPackageDes(this.formatPackage(formatValueFromCell(nextRow.getCell(initCol + 3))));
+				q.setValue(formatDescriptionValue(formatValueFromCell(nextRow.getCell(initCol + 4)).replace(".0", "")));
+				q.setMaxValue(formatMoneyValue(formatValueFromCell(nextRow.getCell(initCol + 8)), CHAR_TO_REMOVE));
+				q.setMinValue(formatMoneyValue(formatValueFromCell(nextRow.getCell(initCol + 10)), CHAR_TO_REMOVE));
+				q.setDescription(formatDescriptionValue(q.getCode(), q.getPackageDes(), q.getValue()));
+
+				information.add(q);
+			}
+
 		} catch (Exception e) {
 			throw new RuntimeException("Error al extraer informacion del xls: " + compositeUrl, e);
-			
+
 		} finally {
-			if (workbook != null) try { workbook.close(); } catch (Exception e) {}
+			if (workbook != null)
+				try {
+					workbook.close();
+				} catch (Exception e) {
+				}
 		}
-		
+
 		return information;
 	}
-	
+
 	private String formatPackage(String code) {
 		return formatDescriptionValue(this.mapPackage.get(code));
 	}
-	
+
 	private static String formatValueFromCell(Cell cell) {
 		String value = "";
-        if ( CellType.STRING.equals(cell.getCellTypeEnum()) ) {
-        	value = cell.getStringCellValue();
-        } else if( CellType.NUMERIC.equals(cell.getCellTypeEnum())) {
-        	value = "" + cell.getNumericCellValue();
-        } else if( CellType.BOOLEAN.equals(cell.getCellTypeEnum())) {	
-        	value = "" + cell.getNumericCellValue();
-        } else if( CellType.NUMERIC.equals(cell.getCellTypeEnum())) {
-        	value = "" + cell.getBooleanCellValue();	 
-        } else {
-        	throw new RuntimeException("Tipo de valor no valido");
-        }
-        return value.trim();
+		if (CellType.STRING.equals(cell.getCellTypeEnum())) {
+			value = cell.getStringCellValue();
+		} else if (CellType.NUMERIC.equals(cell.getCellTypeEnum())) {
+			value = "" + cell.getNumericCellValue();
+		} else if (CellType.BOOLEAN.equals(cell.getCellTypeEnum())) {
+			value = "" + cell.getNumericCellValue();
+		} else if (CellType.NUMERIC.equals(cell.getCellTypeEnum())) {
+			value = "" + cell.getBooleanCellValue();
+		} else {
+			throw new RuntimeException("Tipo de valor no valido");
+		}
+		return value.trim();
 	}
-	
-	private InputStream extractCompress(byte [] data) {
+
+	private InputStream extractCompress(byte[] data) {
 		ZipInputStream zip = null;
 		ZipEntry entry = null;
 		ByteArrayOutputStream target = null;
-	
+
 		try {
-			zip = new ZipInputStream( new ByteArrayInputStream(data));
-        
-	        if((entry = zip.getNextEntry()) != null) {
-	           int count;
-	           byte dataZip[] = new byte[BUFFER];
-	           
-	           target = new ByteArrayOutputStream();	           
-	           while ((count = zip.read(dataZip, 0, BUFFER)) != -1) {
-	        	   target.write(dataZip, 0, count);
-	           }
-	           target.flush();
-	        }
-	        
-	        return new ByteArrayInputStream(target.toByteArray());
-	        
+			zip = new ZipInputStream(new ByteArrayInputStream(data));
+
+			if ((entry = zip.getNextEntry()) != null) {
+				int count;
+				byte dataZip[] = new byte[BUFFER];
+
+				target = new ByteArrayOutputStream();
+				while ((count = zip.read(dataZip, 0, BUFFER)) != -1) {
+					target.write(dataZip, 0, count);
+				}
+				target.flush();
+			}
+
+			return new ByteArrayInputStream(target.toByteArray());
+
 		} catch (IOException e) {
 			if (entry != null) {
-				throw new RuntimeException("Error al descomprimir informacion del zip de datos de " + entry.getName(), e);
+				throw new RuntimeException("Error al descomprimir informacion del zip de datos de " + entry.getName(),
+						e);
 			}
 			throw new RuntimeException("Error al recuperar informacion del zip de datos. URL:" + URL, e);
-			
+
 		} finally {
-			
+
 			try {
-				if (target != null) target.close();
-				if (zip != null) zip.close();
+				if (target != null)
+					target.close();
+				if (zip != null)
+					zip.close();
 			} catch (IOException e) {
 				/* Nothing todo */
 			}
-		}		
+		}
 	}
-	
+
 	public static HSSFWorkbook convertBIFF2To8(InputStream biff2stream) {
 		try {
-			return convert( read(biff2stream), "Tmp" + System.currentTimeMillis());
-			
+			return convert(read(biff2stream), "Tmp" + System.currentTimeMillis());
+
 		} catch (Exception e) {
 			throw new RuntimeException("Error al convertir el xml biff2 a biff8.", e);
 		}
@@ -217,11 +236,11 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 		if (!(biff2Records[0] instanceof BOFRecord)) {
 			throw new RecordFormatException("Expected BOF record");
 		}
-		int lastRecIx = biff2Records.length-1;
+		int lastRecIx = biff2Records.length - 1;
 		if (!(biff2Records[lastRecIx] instanceof EOFRecord)) {
 			throw new RecordFormatException("Expected EOF record");
 		}
-		for (int i=1; i<lastRecIx; i++) {
+		for (int i = 1; i < lastRecIx; i++) {
 			convertRecord(sheet, biff2Records[i]);
 		}
 		return result;
@@ -229,12 +248,12 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 
 	private static void convertRecord(HSSFSheet sheet, Record record) {
 		if (record instanceof CellBaseRecord) {
-			convertCellRecord(sheet, (CellBaseRecord)record);
+			convertCellRecord(sheet, (CellBaseRecord) record);
 			return;
 		}
 		switch (record.getSid()) {
-			case DimensionRecord.sid: 
-				return;
+		case DimensionRecord.sid:
+			return;
 		}
 		throw new RuntimeException("Unexpected record (" + record.getClass().getName() + ")");
 	}
@@ -264,7 +283,7 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 		}
 		throw new RuntimeException("Unexpected record (" + cr.getClass().getName() + ")");
 	}
-	
+
 	public static Record[] read(InputStream is) {
 		RecordInputStream in = new RecordInputStream(is);
 		List<Record> temp = new ArrayList<Record>();
@@ -275,7 +294,7 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 				temp.add(r);
 			}
 		}
-		
+
 		Record[] result = new Record[temp.size()];
 		temp.toArray(result);
 		return result;
@@ -284,85 +303,104 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 	private static Record createRecord(RecordInputStream in) {
 		int sid = in.getSid();
 		switch (sid) {
-			case UnknowRecord.sid:	  return new UnknowRecord(in);
-			case DimensionRecord.sid: return new DimensionRecord(in);
-			case NumberRecord.sid:    return new NumberRecord(in);
-			case LabelRecord.sid:     return new LabelRecord(in);
-			case BOFRecord.sid:       return new BOFRecord(in);
-			case EOFRecord.sid:       return new EOFRecord(in);
+		case UnknowRecord.sid:
+			return new UnknowRecord(in);
+		case DimensionRecord.sid:
+			return new DimensionRecord(in);
+		case NumberRecord.sid:
+			return new NumberRecord(in);
+		case LabelRecord.sid:
+			return new LabelRecord(in);
+		case BOFRecord.sid:
+			return new BOFRecord(in);
+		case EOFRecord.sid:
+			return new EOFRecord(in);
 		}
 		throw new IllegalArgumentException("Unexpected sid (" + new String(HexDump.shortToHex(sid)) + ")");
 	}
 
 	public static final class CellAttributes {
 		public static final int ENCODED_SIZE = 3;
-		
-		private static final BitField xfIndexMask          = bf(0x3F);
-		private static final BitField cellLockedFlag       = bf(0x40);
-		private static final BitField formulaHidden        = bf(0x80);
-		
-		private static final BitField formatIndexMask      = bf(0x3F);
-		private static final BitField fontIndexMask        = bf(0xC0);
 
-		private static final BitField horizontalAlignMask  = bf(0x07);
-		private static final BitField leftBorderFlag       = bf(0x08);
-		private static final BitField rightBorderFlag      = bf(0x10);
-		private static final BitField topBorderFlag        = bf(0x20);
-		private static final BitField bottomBorderFlag     = bf(0x40);
+		private static final BitField xfIndexMask = bf(0x3F);
+		private static final BitField cellLockedFlag = bf(0x40);
+		private static final BitField formulaHidden = bf(0x80);
+
+		private static final BitField formatIndexMask = bf(0x3F);
+		private static final BitField fontIndexMask = bf(0xC0);
+
+		private static final BitField horizontalAlignMask = bf(0x07);
+		private static final BitField leftBorderFlag = bf(0x08);
+		private static final BitField rightBorderFlag = bf(0x10);
+		private static final BitField topBorderFlag = bf(0x20);
+		private static final BitField bottomBorderFlag = bf(0x40);
 		private static final BitField shadedBackgroundFlag = bf(0x80);
-		
+
 		private static BitField bf(int i) {
 			return BitFieldFactory.getInstance(i);
 		}
-		
+
 		private int _protectionAndXF;
 		private int _formatAndFont;
 		private int _style;
+
 		public CellAttributes(LittleEndianInput in) {
 			_protectionAndXF = in.readUByte();
 			_formatAndFont = in.readUByte();
 			_style = in.readUByte();
 		}
+
 		public void serialize(LittleEndianOutput out) {
 			out.writeByte(_protectionAndXF);
 			out.writeByte(_formatAndFont);
 			out.writeByte(_style);
 		}
-		
+
 		public int getXFIndex() {
 			return xfIndexMask.getValue(_protectionAndXF);
 		}
+
 		public boolean isCellLocked() {
 			return cellLockedFlag.isSet(_protectionAndXF);
 		}
+
 		public boolean isFormulaHidden() {
 			return formulaHidden.isSet(_protectionAndXF);
 		}
+
 		public int getFormatIndex() {
 			return formatIndexMask.getValue(_formatAndFont);
 		}
+
 		public int getFontIndex() {
 			return fontIndexMask.getValue(_formatAndFont);
 		}
+
 		public int getHorizontalAlignmentCode() {
 			return horizontalAlignMask.getValue(_style);
 		}
+
 		public boolean isTopBorderSet() {
 			return topBorderFlag.isSet(_style);
 		}
+
 		public boolean isBottomBorderSet() {
 			return bottomBorderFlag.isSet(_style);
 		}
+
 		public boolean isLeftBorderSet() {
 			return leftBorderFlag.isSet(_style);
 		}
+
 		public boolean isRightBorderSet() {
 			return rightBorderFlag.isSet(_style);
 		}
+
 		public boolean isBackgroundShaded() {
 			return shadedBackgroundFlag.isSet(_style);
 		}
 	}
+
 	public static final class BOFRecord extends StandardRecord {
 		public static final int sid = 0x0009;
 		private int _version;
@@ -389,7 +427,7 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 			return sid;
 		}
 	}
-	
+
 	public static final class UnknowRecord extends StandardRecord {
 		public static final int sid = 0x0024;
 
@@ -412,7 +450,7 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 			return sid;
 		}
 	}
-	
+
 	public static final class DimensionRecord extends StandardRecord {
 		public static final int sid = 0x0000;
 		private int _firstRowIndex;
@@ -422,17 +460,17 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 
 		public DimensionRecord(LittleEndianInput in) {
 			_firstRowIndex = in.readUShort();
-			_lastRowIndex = in.readUShort()-1;
+			_lastRowIndex = in.readUShort() - 1;
 			_firstColumnIndex = in.readUShort();
-			_lastColumnIndex = in.readUShort()-1;
+			_lastColumnIndex = in.readUShort() - 1;
 		}
 
 		@Override
 		protected void serialize(LittleEndianOutput out) {
 			out.writeShort(_firstRowIndex);
-			out.writeShort(_lastRowIndex+1);
+			out.writeShort(_lastRowIndex + 1);
 			out.writeShort(_firstColumnIndex);
-			out.writeShort(_lastColumnIndex+1);
+			out.writeShort(_lastColumnIndex + 1);
 		}
 
 		@Override
@@ -445,8 +483,7 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 			return sid;
 		}
 	}
-	
-	
+
 	public static abstract class CellBaseRecord extends StandardRecord {
 		private int _rowIndex;
 		private int _columnIndex;
@@ -470,14 +507,15 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 
 		@Override
 		protected final int getDataSize() {
-			return 2 + 2 + CellAttributes.ENCODED_SIZE
-				+ getSpecificDataSize();
+			return 2 + 2 + CellAttributes.ENCODED_SIZE + getSpecificDataSize();
 		}
 
 		protected abstract int getSpecificDataSize();
+
 		public final int getRowIndex() {
 			return _rowIndex;
 		}
+
 		public final int getColumnIndex() {
 			return _columnIndex;
 		}
@@ -486,6 +524,7 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 			return _cellAttributes;
 		}
 	}
+
 	public static final class NumberRecord extends CellBaseRecord {
 		public static final int sid = 0x0003;
 		private Double _value;
@@ -514,6 +553,7 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 			return _value;
 		}
 	}
+
 	public static final class LabelRecord extends CellBaseRecord {
 		public static final int sid = 0x0004;
 		private String _text;
@@ -534,6 +574,7 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 		protected int getSpecificDataSize() {
 			return 1 + _text.length();
 		}
+
 		public String getText() {
 			return _text;
 		}
@@ -542,5 +583,10 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 		public short getSid() {
 			return sid;
 		}
+	}
+
+	@Override
+	public String getMercado() {
+		return "BSAS";
 	}
 }

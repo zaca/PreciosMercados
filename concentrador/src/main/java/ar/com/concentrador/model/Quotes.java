@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public class Quotes {
+	
+	private String mercado;
 	private String codeExtractor;
 	private String code;
 	private String description;	
@@ -14,6 +16,12 @@ public class Quotes {
 	private String packageDes;
 	private String value;
 	
+	public String getMercado() {
+		return mercado;
+	}
+	public void setMercado(String mercado) {
+		this.mercado = mercado;
+	}
 	public String getCodeExtractor() {
 		return codeExtractor;
 	}
@@ -68,6 +76,7 @@ public class Quotes {
 	public void setValue(String value) {
 		this.value = value;
 	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -77,6 +86,7 @@ public class Quotes {
 		result = prime * result + ((date == null) ? 0 : date.hashCode());
 		result = prime * result + ((description == null) ? 0 : description.hashCode());
 		result = prime * result + ((maxValue == null) ? 0 : maxValue.hashCode());
+		result = prime * result + ((mercado == null) ? 0 : mercado.hashCode());
 		result = prime * result + ((minValue == null) ? 0 : minValue.hashCode());
 		result = prime * result + ((packageDes == null) ? 0 : packageDes.hashCode());
 		result = prime * result + ((source == null) ? 0 : source.hashCode());
@@ -117,6 +127,11 @@ public class Quotes {
 				return false;
 		} else if (!maxValue.equals(other.maxValue))
 			return false;
+		if (mercado == null) {
+			if (other.mercado != null)
+				return false;
+		} else if (!mercado.equals(other.mercado))
+			return false;
 		if (minValue == null) {
 			if (other.minValue != null)
 				return false;
@@ -139,10 +154,14 @@ public class Quotes {
 			return false;
 		return true;
 	}
+	
 	@Override
 	public String toString() {
-		return "Quotes [codeExtractor=" + codeExtractor + ", code=" + code + ", description=" + description + ", date="
-				+ date + ", minValue=" + minValue + ", maxValue=" + maxValue + ", source=" + source + ", packageDes="
-				+ packageDes + ", value=" + value + "]";
+		return "Quotes [mercado=" + mercado + ", codeExtractor=" + codeExtractor + ", code=" + code + ", description="
+				+ description + ", date=" + date + ", minValue=" + minValue + ", maxValue=" + maxValue + ", source="
+				+ source + ", packageDes=" + packageDes + ", value=" + value + "]";
 	}
+	
+	
+	
 }

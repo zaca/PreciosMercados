@@ -1,0 +1,11 @@
+-------------------------------------------------------------------------------
+Test set: ar.com.concentrador.extractor.ExtractorTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.756 sec <<< FAILURE! - in ar.com.concentrador.extractor.ExtractorTest
+executeExtractors(ar.com.concentrador.extractor.ExtractorTest)  Time elapsed: 0.641 sec  <<< ERROR!
+java.lang.RuntimeException: Error al recuperar informacion de la URL:http://www.mercadocentral.gob.ar/sites/default/files/precios_mayoristas/PM-Hortalizas-010-May-2017.zip responseCode:404
+	at ar.com.concentrador.extractor.BaseExtractor.call(BaseExtractor.java:41)
+	at ar.com.concentrador.extractor.impl.MecadoCentralBSASExtractor.extract(MecadoCentralBSASExtractor.java:110)
+	at ar.com.concentrador.extractor.impl.MecadoCentralBSASExtractor.getQuotes(MecadoCentralBSASExtractor.java:95)
+	at ar.com.concentrador.extractor.ExtractorTest.executeExtractors(ExtractorTest.java:15)
+

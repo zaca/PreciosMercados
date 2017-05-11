@@ -3,8 +3,11 @@ package ar.com.concentrador.bo;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -25,7 +28,8 @@ public class QuotesBO {
 	@Inject
 	private List<BaseExtractor> extractors;
 	
-	private List<Quotes> listQuotes;
+	private Map<String,List<Quotes>> listQuotes;
+	
 	private int day = -1;
 	
 	public Collection<Quotes> retriveFilterList(Quotes filter) {
@@ -56,10 +60,15 @@ public class QuotesBO {
 			this.executeExtractors();
 		} else {
 			if (logger.isInfoEnabled()) {
-				this.logger.info("**** Recuperando desde cahce. ****");
+				this.logger.info("**** Recuperando desde cache. ****");
 			}
 		}
-		return this.listQuotes;
+		List<Quotes> newListQuotes = new ArrayList<>();
+		for(List<Quotes> elements:this.listQuotes.values()){
+			newListQuotes.addAll(elements);
+		}
+		
+		return newListQuotes;
 	}
 	
 	private void executeExtractors() {
@@ -67,9 +76,15 @@ public class QuotesBO {
 			this.logger.info("**** Recuperando Datos desde los extractores. ****");
 		}
 		
-		this.listQuotes = new ArrayList<>();
+		if(this.listQuotes == null){
+			this.listQuotes = new HashMap<>();	
+		}
 		for(BaseExtractor base: this.extractors) {
-			this.listQuotes.addAll(base.getQuotes());
+			try{
+				this.listQuotes.put(base.getMercado(),base.getQuotes());				
+			}catch (Exception e) {
+				logger.error("Extractor mercado " + base.getMercado() + " extractor " + base.getCodeExtractor(), e);
+			}
 			if (logger.isInfoEnabled()) {
 				this.logger.info("Recuperando desde el extractor: " + base.getCodeExtractor());
 			}

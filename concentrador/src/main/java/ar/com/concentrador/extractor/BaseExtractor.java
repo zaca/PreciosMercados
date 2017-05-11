@@ -17,6 +17,8 @@ public abstract class BaseExtractor {
 	public abstract String getCodeExtractor();
 	public abstract List<Quotes> getQuotes();
 	
+	public abstract String getMercado();
+	
 	protected byte[] call(String stringUrl) {
 		HttpURLConnection con = null;
 		
