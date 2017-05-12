@@ -44,7 +44,9 @@ public class QuotesBO {
 		/* Ordena */
 		list.sort(new Comparator<Quotes>() {
 		    public int compare(Quotes o1, Quotes o2) {
-		        return o1.getCode().compareTo(o2.getCode());
+		    	String o1String = o1.getMarket()+o1.getCode();
+		    	String o2String = o1.getMarket()+o1.getCode();
+		        return o1String.compareTo(o2String);
 		    }
 		});	
 		

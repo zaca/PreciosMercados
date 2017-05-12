@@ -44,8 +44,11 @@
 <body>
 	<div class="header">Precios Mercados</div>
 	<div class="filters" id="filtersContainer">
-		<select id="filterSelect"></select> <input type="button"
-			id="callButton" value="search" />
+		<select id="filterSelect">
+			<option value="">Seleccione el producto</option>
+		</select>
+		<input type="text" id="filterText"/>
+		<input type="button" id="callButton" value="search" />
 	</div>
 	<div id="serviceResult" class="content"></div>
 	<script type="text/javascript" src="cordova.js"></script>

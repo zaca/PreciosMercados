@@ -47,7 +47,11 @@ var app = {
 
 	callButtonClick : function() {
 		container = document.getElementById("serviceResult");
-		filter = document.getElementById("filterSelect").value;
+		var filter = document.getElementById("filterSelect").value;
+		filterText = document.getElementById("filterText").value;
+		if("" != filterText){
+			filter = filterText;
+		}
 		var response = callRestService(container, filter);
 	}
 
@@ -57,7 +61,7 @@ app.initialize();
 
 function fillFilters(container) {
 	var response = "";
-	var url = "http://34.204.253.238:8080/concentrador/rest/quotation/byCode/123";
+	var url = "http://34.204.253.238:8080/concentrador/rest/quotation/listCodes";
 	var xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState === 4) {
@@ -79,13 +83,14 @@ function fillFilters(container) {
 
 function callRestService(container, value) {
 	var response = "";
-	var url = "http://34.204.253.238:8080/concentrador/rest/quotation/byCode/123";
+	var url = "http://34.204.253.238:8080/concentrador/rest/quotation/byFilter/"
+			+ value;
 	var xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState === 4) {
 			if (xhr.status === 200) {
 				lista = JSON.parse(this.responseText);
-				visualization(lista, container, value);
+				visualization(lista, container);
 			} else {
 				container.innerHTML = xhr.statusText;
 			}
@@ -99,79 +104,89 @@ function callRestService(container, value) {
 	}
 };
 
-function visualization(arr, element, value) {
-	element.innerHTML = "<h2>Mercado: Mar del Plata</h2>";
-	var table = document.createElement("TABLE");
-	table.setAttribute("id", "productsTable");
-	table.setAttribute('class', 'contentTable');
-	element.appendChild(table);
-
-	/* Cabecera */
-	line = document.createElement("TR");
-	line.setAttribute('class', 'contentLineHeader');
-	table.appendChild(line);
-
-	td1 = document.createElement("TD");
-	cellContent1 = document.createTextNode("Descripcion");
-	td1.appendChild(cellContent1);
-	line.appendChild(td1);
-
-	td2 = document.createElement("TD");
-	cellContent2 = document.createTextNode("Precio maximo");
-	td2.appendChild(cellContent2);
-	line.appendChild(td2);
-
-	td3 = document.createElement("TD");
-	cellContent3 = document.createTextNode("Precio minimo");
-	td3.appendChild(cellContent3);
-	line.appendChild(td3);
-
-	td4 = document.createElement("TD");
-	cellContent4 = document.createTextNode("Zona");
-	td4.appendChild(cellContent4);
-	line.appendChild(td4);
+function visualization(arr, element) {
+	while (element.firstChild) {
+	    element.removeChild(element.firstChild);
+	}
+	
+	mercado = "";
 
 	/* Contenido */
 	for (i = 0; i < arr.length; i++) {
-		if (arr[i].code == value) {
+		if(arr[i].market != mercado){
+			h2 = document.createElement("h2");
+			h2Content = document.createTextNode(arr[i].market);
+			h2.appendChild(h2Content);
+			mercado = arr[i].market;
+			element.appendChild(h2);
+			
+			var table = document.createElement("TABLE");
+			table.setAttribute("id", "productsTable");
+			table.setAttribute('class', 'contentTable');
+			element.appendChild(table);
+
+			/* Cabecera */
 			line = document.createElement("TR");
+			line.setAttribute('class', 'contentLineHeader');
 			table.appendChild(line);
 
 			td1 = document.createElement("TD");
-			cellContent1 = document.createTextNode(arr[i].description);
+			cellContent1 = document.createTextNode("Descripcion");
 			td1.appendChild(cellContent1);
 			line.appendChild(td1);
 
 			td2 = document.createElement("TD");
-			cellContent2 = document.createTextNode(arr[i].maxValue);
+			cellContent2 = document.createTextNode("Precio maximo");
 			td2.appendChild(cellContent2);
 			line.appendChild(td2);
 
 			td3 = document.createElement("TD");
-			cellContent3 = document.createTextNode(arr[i].minValue);
+			cellContent3 = document.createTextNode("Precio minimo");
 			td3.appendChild(cellContent3);
 			line.appendChild(td3);
 
 			td4 = document.createElement("TD");
-			cellContent4 = document.createTextNode(arr[i].source);
+			cellContent4 = document.createTextNode("Zona");
 			td4.appendChild(cellContent4);
 			line.appendChild(td4);
 		}
+		
+		line = document.createElement("TR");
+		table.appendChild(line);
+
+		td1 = document.createElement("TD");
+		cellContent1 = document.createTextNode(arr[i].description);
+		td1.appendChild(cellContent1);
+		line.appendChild(td1);
+
+		td2 = document.createElement("TD");
+		cellContent2 = document.createTextNode(arr[i].maxValue);
+		td2.appendChild(cellContent2);
+		line.appendChild(td2);
+
+		td3 = document.createElement("TD");
+		cellContent3 = document.createTextNode(arr[i].minValue);
+		td3.appendChild(cellContent3);
+		line.appendChild(td3);
+
+		td4 = document.createElement("TD");
+		cellContent4 = document.createTextNode(arr[i].source);
+		td4.appendChild(cellContent4);
+		line.appendChild(td4);
 	}
+	element.appendChild(table);
 }
 
 function drawFilters(arr, element) {
 	var select = document.getElementById("filterSelect");
 	var elemento = "";
 	for (i = 0; i < arr.length; i++) {
-		if (elemento != arr[i].description) {
-			var opcion = document.createElement("option");
-			opcion.setAttribute("value", arr[i].code);
-			var texto = document.createTextNode(arr[i].code);
-			opcion.appendChild(texto);
-			select.appendChild(opcion);
-			elemento = arr[i].description;
-		}
+		var opcion = document.createElement("option");
+		opcion.setAttribute("value", arr[i]);
+		var texto = document.createTextNode(arr[i]);
+		opcion.appendChild(texto);
+		select.appendChild(opcion);
+		elemento = arr[i].description;
 	}
 	element.appendChild(select);
 };
