@@ -50,7 +50,7 @@ var app = {
 		var filter = document.getElementById("filterSelect").value;
 		filterText = document.getElementById("filterText").value;
 		if("" != filterText){
-			filter = filterText;
+			filter = filterText.toUpperCase();;
 		}
 		var response = callRestService(container, filter);
 	}
