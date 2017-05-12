@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.Normalizer;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 
@@ -13,12 +15,14 @@ import ar.com.concentrador.model.Quotes;
 public abstract class BaseExtractor {
 	private static final String USER_AGENT = "Mozilla/5.0";
 	private static final int TIME_OUT_SECONDS = 60;
+	
+    private static final Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
 
 	public abstract String getMarket();
 	public abstract String getCodeExtractor();
 	public abstract List<Quotes> getQuotes();
 	
-	protected byte[] call(String stringUrl) {
+	protected byte[] call(String stringUrl) { 
 		HttpURLConnection con = null;
 		
 		try {
@@ -60,8 +64,13 @@ public abstract class BaseExtractor {
 		if (value == null) {
 			value = "";
 		}
-		return value.trim().toUpperCase();
+		return deAccent(value.trim().toUpperCase());
 	}
+	
+	public static String deAccent(String str) {
+	    String nfdNormalizedString = Normalizer.normalize(str, Normalizer.Form.NFD); 
+	    return pattern.matcher(nfdNormalizedString).replaceAll("");
+	}	
 	
 	protected static String formatDescriptionValue(String ... values) {
 		StringBuilder sb = new StringBuilder();
@@ -69,7 +78,7 @@ public abstract class BaseExtractor {
 			sb.append(formatCodeValue(values[i])); 
 			sb.append(" ");
 		}
-		return sb.toString().trim();
+		return sb.toString().toUpperCase().trim();
 	}	
 	
 	protected static BigDecimal formatMoneyValue(String value, char[] toRemove) {

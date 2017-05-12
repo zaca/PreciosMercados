@@ -3,6 +3,7 @@ package ar.com.concentrador.bo;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -32,19 +33,41 @@ public class QuotesBO {
 	private int day = -1;
 	
 	public Collection<Quotes> retriveFilterList(Quotes filter) {
-		return this.getListQuotes().stream()
+		
+		/* Filtra */
+		List<Quotes> list = this.getListQuotes().stream()
 				.filter(b ->  filter.getCode() == null || "".equals(filter.getCode()) || b.getCode().contains(filter.getCode()))
 				.filter(b ->  filter.getPackageDes() == null || "".equals(filter.getPackageDes()) || b.getPackageDes().contains(filter.getPackageDes()))
 				.filter(b ->  filter.getValue() == null || "".equals(filter.getValue()) || b.getValue().contains(filter.getValue()))
 				.collect(Collectors.toList());
+		
+		/* Ordena */
+		list.sort(new Comparator<Quotes>() {
+		    public int compare(Quotes o1, Quotes o2) {
+		        return o1.getCode().compareTo(o2.getCode());
+		    }
+		});	
+		
+		return list;
 	}
 	
 	public Collection<String> retriveListOfCode() {
+		
+		/* Quita Duplicados */
 		Set<String> set = new HashSet<>();
 		for(Quotes q: this.getListQuotes()) {
 			set.add(q.getCode());
-		}		
-		return set;
+		}	
+		
+		/* Ordena */
+		List<String> list = new ArrayList<>(set);
+		list.sort(new Comparator<String>() {
+		    public int compare(String o1, String o2) {
+		        return o1.compareTo(o2);
+		    }
+		});
+		
+		return list;
 	}
 	
 	private List<Quotes> getListQuotes() {

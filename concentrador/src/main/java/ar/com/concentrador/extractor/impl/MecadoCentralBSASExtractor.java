@@ -104,54 +104,26 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 
 	private List<Quotes> extract() {
 		List<Quotes> information = new ArrayList<>();
-		Date date = new Date();
 
-		Calendar c = Calendar.getInstance();
-
-		String compositeUrl = null;
-		byte[] data = null;
-		int i = 1;
-
-		while (i < 4 && data == null) {
-			c.add(Calendar.DAY_OF_MONTH, -1);
-
-			String year = String.valueOf(c.get(Calendar.YEAR));
-			String month = mapMonth.get(c.get(Calendar.MONTH) + 1);
-			String day = String.valueOf(c.get(Calendar.DAY_OF_MONTH));
-			
-			if (day.length() == 1) {
-				day = "0" + day; 
-			}
-
-			compositeUrl = String.format(URL, day + "-" + month + "-" + year);
-			try {
-				data = this.call(compositeUrl);
-				
-			} catch (Exception e) {
-				/* TODO: VER */
-			}
-			i++;
-		}
-		
-		if (data == null) {
-			throw new RuntimeException("No se pudo recuperar la informacion de:" + compositeUrl);
-		}
-
+		byte[] data = this.call(Calendar.getInstance());
 		Workbook workbook = convertBIFF2To8(this.extractCompress(data));
 
 		try {
 
+			Date date = new Date();
 			Sheet firstSheet = workbook.getSheetAt(0);
 			Iterator<Row> iterator = firstSheet.iterator();
+			
+			/* Saltea Titulos */
 			iterator.next();
+			
 			while (iterator.hasNext()) {
 				Row nextRow = iterator.next();
 				int initCol = nextRow.getFirstCellNum();
 
 				Quotes q = createQuotes();
 				q.setDate(date);
-				q.setCode(formatCodeValue(formatValueFromCell(nextRow.getCell(initCol))) + " "
-						+ formatValueFromCell(nextRow.getCell(initCol + 1)));
+				q.setCode(formatCodeValue(formatValueFromCell(nextRow.getCell(initCol)) + " " + formatValueFromCell(nextRow.getCell(initCol + 1))));
 				q.setSource(formatDescriptionValue(formatValueFromCell(nextRow.getCell(initCol + 2))));
 				q.setPackageDes(this.formatPackage(formatValueFromCell(nextRow.getCell(initCol + 3))));
 				q.setValue(formatDescriptionValue(formatValueFromCell(nextRow.getCell(initCol + 4)).replace(".0", "")));
@@ -163,17 +135,57 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 			}
 
 		} catch (Exception e) {
-			throw new RuntimeException("Error al extraer informacion del xls: " + compositeUrl, e);
+			throw new RuntimeException("Error al extraer informacion del xls: " + workbook.getSheetName(0), e);
 
 		} finally {
 			if (workbook != null)
 				try {
 					workbook.close();
 				} catch (Exception e) {
+					/* nothing todo */
 				}
 		}
 
 		return information;
+	}
+	
+	private byte[] call(Calendar c) {
+		List<String> urls = new ArrayList<>();
+		List<Exception> exs = new ArrayList<>();
+		
+		byte[] data = null;
+		
+		int i = 1;
+		while (i < 4 && data == null) {
+			c.add(Calendar.DAY_OF_MONTH, -1);
+
+			String year = String.valueOf(c.get(Calendar.YEAR));
+			String month = mapMonth.get(c.get(Calendar.MONTH) + 1);
+			String day = String.valueOf(c.get(Calendar.DAY_OF_MONTH));
+			
+			if (day.length() == 1) {
+				day = "0" + day; 
+			}
+
+			urls.add( String.format(URL, day + "-" + month + "-" + year) );
+			try {
+				data = this.call(urls.get(urls.size()-1) );
+			} catch (Exception e) {
+				exs.add(e);
+			}
+			
+			i++;
+		}
+		
+		if (data == null) {
+			Exception e = new Exception("No se tuvo acceso a los siguientes archivos...");
+			for(Exception ee: exs) { 
+				e.addSuppressed(ee);
+			}
+			throw new RuntimeException("No se pudo recuperar la informacion de: " + urls, e);
+		}
+		
+		return data;
 	}
 
 	private String formatPackage(String code) {
@@ -196,7 +208,7 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 		return value.trim();
 	}
 
-	private InputStream extractCompress(byte[] data) {
+	private Object[] extractCompress(byte[] data) {
 		ZipInputStream zip = null;
 		ZipEntry entry = null;
 		ByteArrayOutputStream target = null;
@@ -212,34 +224,32 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 				while ((count = zip.read(dataZip, 0, BUFFER)) != -1) {
 					target.write(dataZip, 0, count);
 				}
+				
 				target.flush();
+				
+				return new Object[] { new ByteArrayInputStream(target.toByteArray()), entry.getName()};
 			}
-
-			return new ByteArrayInputStream(target.toByteArray());
+			
+			throw new RuntimeException("Archivo corrupto.");
 
 		} catch (IOException e) {
 			if (entry != null) {
-				throw new RuntimeException("Error al descomprimir informacion del zip de datos de " + entry.getName(),
-						e);
+				throw new RuntimeException("Error al descomprimir informacion del zip de datos de " + entry.getName(), e);
 			}
-			throw new RuntimeException("Error al recuperar informacion del zip de datos. URL:" + URL, e);
+			throw new RuntimeException("Error al recuperar informacion del zip de datos.", e);
 
 		} finally {
-
-			try {
-				if (target != null)
-					target.close();
-				if (zip != null)
-					zip.close();
-			} catch (IOException e) {
-				/* Nothing todo */
-			}
+			try { if (target != null)	target.close(); } catch (IOException e) {}
+			try { if (zip != null) zip.close(); } catch (IOException e) {}
 		}
 	}
 
-	public static HSSFWorkbook convertBIFF2To8(InputStream biff2stream) {
+	public static HSSFWorkbook convertBIFF2To8(Object[] data) {
+		InputStream biff2stream = (InputStream)data[0];
+		String name = data[1].toString();
+		
 		try {
-			return convert(read(biff2stream), "Tmp" + System.currentTimeMillis());
+			return convert(read(biff2stream), name);
 
 		} catch (Exception e) {
 			throw new RuntimeException("Error al convertir el xml biff2 a biff8.", e);

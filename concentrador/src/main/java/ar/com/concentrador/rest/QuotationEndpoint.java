@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response.Status;
 import org.slf4j.Logger;
 
 import ar.com.concentrador.bo.QuotesBO;
+import ar.com.concentrador.extractor.BaseExtractor;
 import ar.com.concentrador.model.Quotes;
 
 @Stateless
@@ -27,7 +28,7 @@ public class QuotationEndpoint {
 	
 	@GET
 	@Path("/byFilter/{code}")
-	@Produces(MediaType.APPLICATION_JSON + ";charset=ISO-8859-1")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=ISO-8859-1")
 	public Response byCode(@PathParam("code") String code) {
 		if (code == null) {
 			return Response.status(Status.BAD_REQUEST).build();
@@ -41,7 +42,7 @@ public class QuotationEndpoint {
 	
 	@GET
 	@Path("/byFilter/{code}/{package}")
-	@Produces(MediaType.APPLICATION_JSON + ";charset=ISO-8859-1")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=ISO-8859-1")
 	public Response byCode(@PathParam("code") String code, @PathParam("package") String packageDes) {
 		if (code == null) {
 			return Response.status(Status.BAD_REQUEST).build();
@@ -60,7 +61,7 @@ public class QuotationEndpoint {
 	
 	@GET
 	@Path("/byFilter/{code}/{package}/{value}")
-	@Produces(MediaType.APPLICATION_JSON + ";charset=ISO-8859-1")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=ISO-8859-1")
 	public Response byCode(@PathParam("code") String code, @PathParam("package") String packageDes, @PathParam("value") String value) {
 		if (code == null) {
 			return Response.status(Status.BAD_REQUEST).build();
@@ -84,7 +85,7 @@ public class QuotationEndpoint {
 	
 	@GET
 	@Path("/listCodes")
-	@Produces(MediaType.APPLICATION_JSON + ";charset=ISO-8859-1")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=ISO-8859-1")
 	public Response listCodes() {
 		try {
 			return Response.ok(quotesBO.retriveListOfCode()).build();
@@ -96,6 +97,8 @@ public class QuotationEndpoint {
 	
 	private Response byFilter(Quotes q) {
 		try {
+			q.setCode( BaseExtractor.deAccent(q.getCode()) );
+			
 			return Response.ok(quotesBO.retriveFilterList(q)).build();
 		} catch (Exception e) {
 			logger.error("Error al recuperar productos por filtro. Filtro" + q, e);
