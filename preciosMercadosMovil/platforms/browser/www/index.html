@@ -18,8 +18,8 @@
     under the License.
 -->
 <html>
-    <head>
-        <!--
+<head>
+<!--
         Customize this policy to fit your own app's needs. For more guidance, see:
             https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
         Some notes:
@@ -28,28 +28,97 @@
             * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
                 * Enable inline JS: add 'unsafe-inline' to default-src
         -->
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">
-        <meta name="format-detection" content="telephone=no">
-        <meta name="msapplication-tap-highlight" content="no">
-        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
-        <link rel="stylesheet" type="text/css" href="css/index.css">
-        <title>Precios Mercados</title>
-    </head>
-    <body>
-        <div class="app">
-            <h1>Precios Mercados</h1>
-            <div id="mainWindow" class="blink">
-                <p class="event listening">Connecting to Device</p>
-                <p class="event received">Device is Ready</p>
-             </div>
-             <div>
-                <input type="button" id="callButton" value="search"/>
-                <div id="serviceResult">
-                	Realice una busqueda
-                </div>
-            </div>
-        </div>
-        <script type="text/javascript" src="cordova.js"></script>
-        <script type="text/javascript" src="js/index.js"></script>
-    </body>
+<!--   
+        meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">
+        -->
+<meta http-equiv="Content-Security-Policy"
+	content="default-src * 'self' 'unsafe-inline' data: gap: 'unsafe-eval'; style-src * 'self' 'unsafe-inline'; connect-src * ; script-src * 'self' 'unsafe-inline'; media-src *">
+<meta name="format-detection" content="telephone=no">
+<meta name="msapplication-tap-highlight" content="no">
+<meta name="viewport"
+	content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+<link rel="stylesheet" type="text/css" href="css/index.css">
+<link rel="stylesheet" type="text/css" href="css/myCss.css">
+<title>Precios Mercados</title>
+</head>
+
+<body class="body">
+	<div id="principal">
+		<div class="title">
+			<div class="text-title">Precios Mercados</div>
+		</div>
+		<div class="filters">
+			<div class="text-filter" id="textFilterContainer">
+				<input class="text-field-filter" id="filterText"
+					maxlength="256" name="field-2" placeholder="Example Text"
+					required="required" type="text"> <img class="image"
+					src="img/search-icon.png" width="36" id="searchButton">
+					<img src="img/config.png" width="35" id="configButton">
+			</div>
+			<div class="select-filter" id="filtersSelectContainer">
+				<select class="select-field" id="filterSelect">
+					<option value="">Seleccione el producto</option>
+				</select>
+			</div>
+		</div>
+		<div id="serviceResult" class="resultContainer"></div>
+	</div>
+
+	<div id="configContainer" class="configcontainer" style="display:none;">
+		<div class="section">
+			<div class="text-block-2">Precios mercados - Configuracion</div>
+		</div>
+		<div class="section-2">
+			<div>
+				<label class="field-label">Mercados</label>
+				<div class="mercadoselectorcontainer">
+					<div class="w-checkbox">
+						<input class="w-checkbox-input" data-name="Checkbox 3"
+							id="checkbox-3" name="checkbox-3" type="checkbox"> <label
+							class="w-form-label" for="checkbox-3">Mercado central de Bs As</label>
+					</div>
+					<div class="w-checkbox">
+						<input class="w-checkbox-input"
+							id="checkbox-2" name="checkbox-2" type="checkbox"> <label
+							class="w-form-label" for="checkbox-2">Mar del Plata</label>
+					</div>
+					<div class="w-checkbox">
+						<input class="w-checkbox-input" data-name="Checkbox" id="checkbox"
+							name="checkbox" type="checkbox"> <label
+							class="w-form-label" for="checkbox">La Plata</label>
+					</div>
+				</div>
+				<label class="field-label">Tipos de producto</label>
+				<div class="tipoproductocontainer">
+					<div class="w-checkbox">
+						<input class="w-checkbox-input" data-name="Checkbox 4"
+							id="checkbox-4" name="checkbox-4" type="checkbox"> <label
+							class="w-form-label" for="checkbox-4">Hortalizas</label>
+					</div>
+					<div class="w-checkbox">
+						<input class="w-checkbox-input" data-name="Checkbox 7"
+							id="checkbox-7" name="checkbox-7" type="checkbox"> <label
+							class="w-form-label" for="checkbox-7">Frutas</label>
+					</div>
+					<div>
+						<input class="w-checkbox-input" data-name="Checkbox 6"
+							id="checkbox-6" name="checkbox-6" type="checkbox"> <label
+							class="w-form-label" for="checkbox-6">Verduras</label>
+					</div>
+				</div>
+			</div>
+			<div class="closeConfigButtonContainer">
+				<img src="img/okConfig.png" width="35" id="closeConfigButton">
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript" src="cordova.js"></script>
+	<script type="text/javascript" src="js/index.js"></script>
+</body>
+
+
+
+
+
 </html>

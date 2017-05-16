@@ -30,11 +30,18 @@ var app = {
 	// 'pause', 'resume', etc.
 	onDeviceReady : function() {
 		// this.receivedEvent('deviceready');
-		callButton = document.getElementById("callButton");
-		callButton.addEventListener('click', this.callButtonClick, false);
+		
+		searchButton = document.getElementById("searchButton");
+		searchButton.addEventListener('click', this.searchButtonClick, false);
+		
+		configButton = document.getElementById("configButton");
+		configButton.addEventListener('click', this.configButtonClick, false);
 
-		filterContainer = document.getElementById("filtersContainer");
+		filterContainer = document.getElementById("filtersSelectContainer");
 		fillFilters(filterContainer);
+		
+		closeConfigButton = document.getElementById("closeConfigButton");
+		closeConfigButton.addEventListener('click', this.closeConfigButtonClick, false);
 
 		// var select = document.getElementById("filterSelect");
 		// select.addEventListener("change", filtersChange, false);
@@ -45,7 +52,7 @@ var app = {
 		console.log('Received Event: ' + id);
 	},
 
-	callButtonClick : function() {
+	searchButtonClick : function() {
 		container = document.getElementById("serviceResult");
 		var filter = document.getElementById("filterSelect").value;
 		filterText = document.getElementById("filterText").value;
@@ -53,6 +60,22 @@ var app = {
 			filter = filterText.toUpperCase();;
 		}
 		var response = callRestService(container, filter);
+	},
+	
+	configButtonClick : function() {
+		principal = document.getElementById("principal");
+		config = document.getElementById("configContainer");
+		principal.style.display = "none";
+		config.style.display = "block";
+	},
+	
+	closeConfigButtonClick : function() {
+		principal = document.getElementById("principal");
+		config = document.getElementById("configContainer");
+		
+		principal.style.display = "block";
+		config.style.display = "none";
+		
 	}
 
 };
@@ -117,6 +140,7 @@ function visualization(arr, element) {
 			h2 = document.createElement("h2");
 			h2Content = document.createTextNode(arr[i].market);
 			h2.appendChild(h2Content);
+			h2.setAttribute('class', 'subtitle');
 			mercado = arr[i].market;
 			element.appendChild(h2);
 			
@@ -135,15 +159,36 @@ function visualization(arr, element) {
 			td1.appendChild(cellContent1);
 			line.appendChild(td1);
 
+			tdPrecios = document.createElement("TD");
+			tdPrecios.colSpan = 2;
+			tablePrecios = document.createElement("TABLE");
+			tablePrecios.style.width = "100%";
+			tdPrecios.appendChild(tablePrecios);
+			tr1Precios = document.createElement("TR");
+			tablePrecios.appendChild(tr1Precios);
+			tdPrecios.appendChild(tablePrecios);
+			
+			tdPrecio = document.createElement("TD");
+			cellContentPrecio = document.createTextNode("Precio");
+			tdPrecio.style.textAlign = "center";
+			tdPrecio.colSpan = 2;
+			tdPrecio.appendChild(cellContentPrecio);
+			tr1Precios.appendChild(tdPrecio);
+		
+			tr2Precios = document.createElement("TR");
+			tablePrecios.appendChild(tr2Precios);
+			
 			td2 = document.createElement("TD");
-			cellContent2 = document.createTextNode("Precio maximo");
+			cellContent2 = document.createTextNode("Max");
 			td2.appendChild(cellContent2);
-			line.appendChild(td2);
+			tr2Precios.appendChild(td2);
 
 			td3 = document.createElement("TD");
-			cellContent3 = document.createTextNode("Precio minimo");
+			cellContent3 = document.createTextNode("Min");
 			td3.appendChild(cellContent3);
-			line.appendChild(td3);
+			tr2Precios.appendChild(td3);
+			
+			line.appendChild(tdPrecios);
 
 			td4 = document.createElement("TD");
 			cellContent4 = document.createTextNode("Zona");
@@ -151,8 +196,15 @@ function visualization(arr, element) {
 			line.appendChild(td4);
 		}
 		
+		//table.innerHTML = "<tr><td>"+ arr[i].description+"</td><td>"+ arr[i].maxValue +"</td><td>"+ arr[i].minValue +"</td><td>"+arr[i].source+"</td></tr>"
 		line = document.createElement("TR");
+		//createAumentedLine(line, arr[i], i);
+		line.setAttribute('class', 'content');
+		line.setAttribute('onmouseleave', 'this.style.fontSize = "10px"');
+		line.setAttribute('onmouseover', 'this.style.fontSize = "20px"');
 		table.appendChild(line);
+		//line.addEventListener('mouseleave', this.style.fontSize = "16px";);
+		//line.addEventListener('mouseover', function(){line.style.fontSize = "20px";});
 
 		td1 = document.createElement("TD");
 		cellContent1 = document.createTextNode(arr[i].description);
@@ -190,4 +242,21 @@ function drawFilters(arr, element) {
 	}
 	element.appendChild(select);
 };
+
+function lineTouched(aumentedTr){
+	aumentedTr.style.fontSize = "20px";
+}
+
+function lineUnTouched(aumentedTr){
+	aumentedTr.style.fontSize = "16px";
+}
+
+function createAumentedLine(line, reg,i){
+	element = document.createElement("DIV");
+	element.setAttribute('id', 'aumentedDiv'+i);
+	element.setAttribute('class', 'aumentedDiv');
+	elementContent = document.createTextNode("Descripcion: " + reg.description);
+	element.appendChild(elementContent);
+	line.appendChild(element);
+}
 

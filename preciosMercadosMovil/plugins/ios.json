@@ -7,10 +7,10 @@
         "files": {}
     },
     "installed_plugins": {
-        "cordova-plugin-whitelist": {
+        "cordova-plugin-device-orientation": {
             "PACKAGE_NAME": "com.madmax.preciosMercados"
         },
-        "cordova-plugin-device-orientation": {
+        "cordova-plugin-whitelist": {
             "PACKAGE_NAME": "com.madmax.preciosMercados"
         }
     },
