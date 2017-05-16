@@ -6,6 +6,7 @@ import java.util.Date;
 public class Quotes {
 	
 	private String market;
+	private String product;
 	private String codeExtractor;
 	private String code;
 	private String description;	
@@ -21,6 +22,12 @@ public class Quotes {
 	}
 	public void setMarket(String market) {
 		this.market = market;
+	}
+	public String getProduct() {
+		return product;
+	}
+	public void setProduct(String product) {
+		this.product = product;
 	}
 	public String getCodeExtractor() {
 		return codeExtractor;
@@ -76,7 +83,6 @@ public class Quotes {
 	public void setValue(String value) {
 		this.value = value;
 	}
-	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -85,10 +91,11 @@ public class Quotes {
 		result = prime * result + ((codeExtractor == null) ? 0 : codeExtractor.hashCode());
 		result = prime * result + ((date == null) ? 0 : date.hashCode());
 		result = prime * result + ((description == null) ? 0 : description.hashCode());
-		result = prime * result + ((maxValue == null) ? 0 : maxValue.hashCode());
 		result = prime * result + ((market == null) ? 0 : market.hashCode());
+		result = prime * result + ((maxValue == null) ? 0 : maxValue.hashCode());
 		result = prime * result + ((minValue == null) ? 0 : minValue.hashCode());
 		result = prime * result + ((packageDes == null) ? 0 : packageDes.hashCode());
+		result = prime * result + ((product == null) ? 0 : product.hashCode());
 		result = prime * result + ((source == null) ? 0 : source.hashCode());
 		result = prime * result + ((value == null) ? 0 : value.hashCode());
 		return result;
@@ -122,15 +129,15 @@ public class Quotes {
 				return false;
 		} else if (!description.equals(other.description))
 			return false;
-		if (maxValue == null) {
-			if (other.maxValue != null)
-				return false;
-		} else if (!maxValue.equals(other.maxValue))
-			return false;
 		if (market == null) {
 			if (other.market != null)
 				return false;
 		} else if (!market.equals(other.market))
+			return false;
+		if (maxValue == null) {
+			if (other.maxValue != null)
+				return false;
+		} else if (!maxValue.equals(other.maxValue))
 			return false;
 		if (minValue == null) {
 			if (other.minValue != null)
@@ -141,6 +148,11 @@ public class Quotes {
 			if (other.packageDes != null)
 				return false;
 		} else if (!packageDes.equals(other.packageDes))
+			return false;
+		if (product == null) {
+			if (other.product != null)
+				return false;
+		} else if (!product.equals(other.product))
 			return false;
 		if (source == null) {
 			if (other.source != null)
@@ -154,14 +166,12 @@ public class Quotes {
 			return false;
 		return true;
 	}
-	
 	@Override
 	public String toString() {
-		return "Quotes [market=" + market + ", codeExtractor=" + codeExtractor + ", code=" + code + ", description="
-				+ description + ", date=" + date + ", minValue=" + minValue + ", maxValue=" + maxValue + ", source="
-				+ source + ", packageDes=" + packageDes + ", value=" + value + "]";
+		return "Quotes [market=" + market + ", product=" + product + ", codeExtractor=" + codeExtractor + ", code="
+				+ code + ", description=" + description + ", date=" + date + ", minValue=" + minValue + ", maxValue="
+				+ maxValue + ", source=" + source + ", packageDes=" + packageDes + ", value=" + value + "]";
 	}
 	
-	
-	
+		
 }
