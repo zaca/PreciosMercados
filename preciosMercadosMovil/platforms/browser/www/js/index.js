@@ -30,18 +30,19 @@ var app = {
 	// 'pause', 'resume', etc.
 	onDeviceReady : function() {
 		// this.receivedEvent('deviceready');
-		
+
 		searchButton = document.getElementById("searchButton");
 		searchButton.addEventListener('click', this.searchButtonClick, false);
-		
+
 		configButton = document.getElementById("configButton");
 		configButton.addEventListener('click', this.configButtonClick, false);
 
 		filterContainer = document.getElementById("filtersSelectContainer");
 		fillFilters(filterContainer);
-		
+
 		closeConfigButton = document.getElementById("closeConfigButton");
-		closeConfigButton.addEventListener('click', this.closeConfigButtonClick, false);
+		closeConfigButton.addEventListener('click',
+				this.closeConfigButtonClick, false);
 
 		// var select = document.getElementById("filterSelect");
 		// select.addEventListener("change", filtersChange, false);
@@ -56,26 +57,32 @@ var app = {
 		container = document.getElementById("serviceResult");
 		var filter = document.getElementById("filterSelect").value;
 		filterText = document.getElementById("filterText").value;
-		if("" != filterText){
-			filter = filterText.toUpperCase();;
+		if ("" != filterText) {
+			filter = filterText.toUpperCase();
+			;
 		}
 		var response = callRestService(container, filter);
 	},
-	
+
 	configButtonClick : function() {
 		principal = document.getElementById("principal");
 		config = document.getElementById("configContainer");
+		
+		loadPreferences();
+		
 		principal.style.display = "none";
 		config.style.display = "block";
 	},
-	
+
 	closeConfigButtonClick : function() {
 		principal = document.getElementById("principal");
 		config = document.getElementById("configContainer");
-		
+
+		savePreferences();
+
 		principal.style.display = "block";
 		config.style.display = "none";
-		
+
 	}
 
 };
@@ -129,21 +136,21 @@ function callRestService(container, value) {
 
 function visualization(arr, element) {
 	while (element.firstChild) {
-	    element.removeChild(element.firstChild);
+		element.removeChild(element.firstChild);
 	}
-	
+
 	mercado = "";
 
 	/* Contenido */
 	for (i = 0; i < arr.length; i++) {
-		if(arr[i].market != mercado){
+		if (arr[i].market != mercado) {
 			h2 = document.createElement("h2");
 			h2Content = document.createTextNode(arr[i].market);
 			h2.appendChild(h2Content);
 			h2.setAttribute('class', 'subtitle');
 			mercado = arr[i].market;
 			element.appendChild(h2);
-			
+
 			var table = document.createElement("TABLE");
 			table.setAttribute("id", "productsTable");
 			table.setAttribute('class', 'contentTable');
@@ -167,17 +174,17 @@ function visualization(arr, element) {
 			tr1Precios = document.createElement("TR");
 			tablePrecios.appendChild(tr1Precios);
 			tdPrecios.appendChild(tablePrecios);
-			
+
 			tdPrecio = document.createElement("TD");
 			cellContentPrecio = document.createTextNode("Precio");
 			tdPrecio.style.textAlign = "center";
 			tdPrecio.colSpan = 2;
 			tdPrecio.appendChild(cellContentPrecio);
 			tr1Precios.appendChild(tdPrecio);
-		
+
 			tr2Precios = document.createElement("TR");
 			tablePrecios.appendChild(tr2Precios);
-			
+
 			td2 = document.createElement("TD");
 			cellContent2 = document.createTextNode("Max");
 			td2.appendChild(cellContent2);
@@ -187,7 +194,7 @@ function visualization(arr, element) {
 			cellContent3 = document.createTextNode("Min");
 			td3.appendChild(cellContent3);
 			tr2Precios.appendChild(td3);
-			
+
 			line.appendChild(tdPrecios);
 
 			td4 = document.createElement("TD");
@@ -195,16 +202,19 @@ function visualization(arr, element) {
 			td4.appendChild(cellContent4);
 			line.appendChild(td4);
 		}
-		
-		//table.innerHTML = "<tr><td>"+ arr[i].description+"</td><td>"+ arr[i].maxValue +"</td><td>"+ arr[i].minValue +"</td><td>"+arr[i].source+"</td></tr>"
+
+		// table.innerHTML = "<tr><td>"+ arr[i].description+"</td><td>"+
+		// arr[i].maxValue +"</td><td>"+ arr[i].minValue
+		// +"</td><td>"+arr[i].source+"</td></tr>"
 		line = document.createElement("TR");
-		//createAumentedLine(line, arr[i], i);
+		// createAumentedLine(line, arr[i], i);
 		line.setAttribute('class', 'content');
-		line.setAttribute('onmouseleave', 'this.style.fontSize = "12px"');
+		line.setAttribute('onmouseleave', 'this.style.fontSize = "10px"');
 		line.setAttribute('onmouseover', 'this.style.fontSize = "20px"');
 		table.appendChild(line);
-		//line.addEventListener('mouseleave', this.style.fontSize = "16px";);
-		//line.addEventListener('mouseover', function(){line.style.fontSize = "20px";});
+		// line.addEventListener('mouseleave', this.style.fontSize = "16px";);
+		// line.addEventListener('mouseover', function(){line.style.fontSize =
+		// "20px";});
 
 		td1 = document.createElement("TD");
 		cellContent1 = document.createTextNode(arr[i].description);
@@ -243,20 +253,51 @@ function drawFilters(arr, element) {
 	element.appendChild(select);
 };
 
-function lineTouched(aumentedTr){
+function lineTouched(aumentedTr) {
 	aumentedTr.style.fontSize = "20px";
 }
 
-function lineUnTouched(aumentedTr){
+function lineUnTouched(aumentedTr) {
 	aumentedTr.style.fontSize = "16px";
 }
 
-function createAumentedLine(line, reg,i){
+function createAumentedLine(line, reg, i) {
 	element = document.createElement("DIV");
-	element.setAttribute('id', 'aumentedDiv'+i);
+	element.setAttribute('id', 'aumentedDiv' + i);
 	element.setAttribute('class', 'aumentedDiv');
 	elementContent = document.createTextNode("Descripcion: " + reg.description);
 	element.appendChild(elementContent);
 	line.appendChild(element);
 }
 
+function savePreferences() {
+	localstorage = window.localStorage;
+	productos = document.getElementsByName("checkboxProductos");
+	for (e = 0; e < productos.length; e++) {
+		if (productos[e].checked == true) {
+			localStorage.setItem(productos[e], "1");
+		}
+	}
+	mercados = document.getElementsByName("checkboxMercados");
+	for (e = 0; e < productos.length; e++) {
+		if (mercados[e].checked == true) {
+			localStorage.setItem(mercados[e], "1");
+		}
+	}
+}
+
+function loadPreferences() {
+	localstorage = window.localStorage;
+	productos = document.getElementsByName("checkboxProductos");
+	for (e = 0; e < productos.length; e++) {
+		if (localStorage.getItem(productos[e].value) == "1") {
+			productos[e].checked = true;
+		}
+	}
+	mercados = document.getElementsByName("checkboxMercados");
+	for (e = 0; e < productos.length; e++) {
+		if (localStorage.getItem(mercados[e].value) == "1") {
+			mercados[e].checked = true;
+		}
+	}
+}
