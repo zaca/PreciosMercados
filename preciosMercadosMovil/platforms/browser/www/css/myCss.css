@@ -21,9 +21,12 @@ body {
 		margin-top: auto;
 		margin-bottom: auto;
 		float: none;
-		background-image: -webkit-linear-gradient(270deg, rgba(8, 168, 45, .77),
+		background-color: #008040;
+		/*
+			background-image: -webkit-linear-gradient(270deg, rgba(8, 168, 45, .77),
 			#454d42);
 		background-image: linear-gradient(180deg, rgba(8, 168, 45, .77), #454d42);
+		*/
 	}
 }
 

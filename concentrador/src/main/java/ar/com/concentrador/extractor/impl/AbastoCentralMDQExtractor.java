@@ -10,16 +10,25 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import ar.com.concentrador.enums.ProductTypes;
 import ar.com.concentrador.extractor.BaseExtractor;
 import ar.com.concentrador.model.Quotes;
 
 public class AbastoCentralMDQExtractor extends BaseExtractor {
 	private static final String CODE_EXTRACTOR = "01";
 	private static final String CODE_MARKET = "MDQ";
-	private static final String URL = "http://www.abastocentralmdp.com/lista.php?id_rubro=3";
+	private static final String URL = "http://www.abastocentralmdp.com/lista.php?id_rubro=%s";
 	private static final char[] CHAR_TO_REMOVE = {'$', '-'}; 
 	private static final Charset CHARSET = Charset.forName("ISO-8859-1");
 	
+	private int urlParam;
+	private ProductTypes productType;
+	
+	public AbastoCentralMDQExtractor(int i, ProductTypes pt) {
+		this.urlParam = i;
+		this.productType = pt;
+	}
+
 	@Override
 	public String getCodeExtractor() {
 		return CODE_EXTRACTOR;
@@ -29,7 +38,7 @@ public class AbastoCentralMDQExtractor extends BaseExtractor {
 	public String getMarket() {
 		return CODE_MARKET;
 	}	
-
+	
 	@Override
 	public List<Quotes> getQuotes() {
 		return this.extract();
@@ -38,7 +47,7 @@ public class AbastoCentralMDQExtractor extends BaseExtractor {
 	private List<Quotes> extract() {
 		List<Quotes> information = new ArrayList<>();
 		Date date = new Date();
-		byte [] data = this.call(URL);
+		byte [] data = this.call(String.format(URL, this.urlParam));
 		Document doc = Jsoup.parse(new String(data, CHARSET));
 		
 	    for (Element table : doc.select("table > tbody > tr > td > table")) {
@@ -47,6 +56,7 @@ public class AbastoCentralMDQExtractor extends BaseExtractor {
 	            
 	            Quotes q = createQuotes();
 	            q.setDate(date);
+	            q.setProductType(this.productType.getId());
 	            q.setCode(formatCodeValue(tds.get(0).text()));
 	            q.setDescription(formatDescriptionValue(formatCodeValue(tds.get(0).text()), tds.get(2).text(), tds.get(3).text()));
 	            q.setSource(formatDescriptionValue(tds.get(1).text()));
@@ -61,6 +71,5 @@ public class AbastoCentralMDQExtractor extends BaseExtractor {
 		
 		return information;
 	}
-
 
 }

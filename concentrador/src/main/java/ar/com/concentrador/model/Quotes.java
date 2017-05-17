@@ -6,7 +6,7 @@ import java.util.Date;
 public class Quotes {
 	
 	private String market;
-	private String product;
+	private String productType;
 	private String codeExtractor;
 	private String code;
 	private String description;	
@@ -22,12 +22,6 @@ public class Quotes {
 	}
 	public void setMarket(String market) {
 		this.market = market;
-	}
-	public String getProduct() {
-		return product;
-	}
-	public void setProduct(String product) {
-		this.product = product;
 	}
 	public String getCodeExtractor() {
 		return codeExtractor;
@@ -83,6 +77,12 @@ public class Quotes {
 	public void setValue(String value) {
 		this.value = value;
 	}
+	public String getProductType() {
+		return productType;
+	}
+	public void setProductType(String productType) {
+		this.productType = productType;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -95,7 +95,7 @@ public class Quotes {
 		result = prime * result + ((maxValue == null) ? 0 : maxValue.hashCode());
 		result = prime * result + ((minValue == null) ? 0 : minValue.hashCode());
 		result = prime * result + ((packageDes == null) ? 0 : packageDes.hashCode());
-		result = prime * result + ((product == null) ? 0 : product.hashCode());
+		result = prime * result + ((productType == null) ? 0 : productType.hashCode());
 		result = prime * result + ((source == null) ? 0 : source.hashCode());
 		result = prime * result + ((value == null) ? 0 : value.hashCode());
 		return result;
@@ -149,10 +149,10 @@ public class Quotes {
 				return false;
 		} else if (!packageDes.equals(other.packageDes))
 			return false;
-		if (product == null) {
-			if (other.product != null)
+		if (productType == null) {
+			if (other.productType != null)
 				return false;
-		} else if (!product.equals(other.product))
+		} else if (!productType.equals(other.productType))
 			return false;
 		if (source == null) {
 			if (other.source != null)
@@ -168,10 +168,10 @@ public class Quotes {
 	}
 	@Override
 	public String toString() {
-		return "Quotes [market=" + market + ", product=" + product + ", codeExtractor=" + codeExtractor + ", code="
-				+ code + ", description=" + description + ", date=" + date + ", minValue=" + minValue + ", maxValue="
-				+ maxValue + ", source=" + source + ", packageDes=" + packageDes + ", value=" + value + "]";
+		return "Quotes [market=" + market + ", productType=" + productType + ", codeExtractor=" + codeExtractor
+				+ ", code=" + code + ", description=" + description + ", date=" + date + ", minValue=" + minValue
+				+ ", maxValue=" + maxValue + ", source=" + source + ", packageDes=" + packageDes + ", value=" + value
+				+ "]";
 	}
-	
 		
 }

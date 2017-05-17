@@ -67,9 +67,9 @@ var app = {
 	configButtonClick : function() {
 		principal = document.getElementById("principal");
 		config = document.getElementById("configContainer");
-		
+
 		loadPreferences();
-		
+
 		principal.style.display = "none";
 		config.style.display = "block";
 	},
@@ -116,6 +116,62 @@ function callRestService(container, value) {
 	var url = "http://34.204.253.238:8080/concentrador/rest/quotation/byFilter/"
 			+ value;
 	var xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = function() {
+		if (xhr.readyState === 4) {
+			if (xhr.status === 200) {
+				lista = JSON.parse(this.responseText);
+				visualization(lista, container);
+			} else {
+				container.innerHTML = xhr.statusText;
+			}
+		}
+	};
+	try {
+		xhr.open('GET', url, true);
+		xhr.send();
+	} catch (err) {
+		container.innerHTML = err.message;
+	}
+};
+
+function callPostService(container, value) {
+
+	localstorage = window.localStorage;
+	var paramProducts = [];
+	var products = JSON.parse(localstorage.getItem("products"));
+	if(products != null){
+		var productsList = products.markets;
+		for (i = 0; i < productsList.length; i++) {
+			product = productsList[i];
+			if (product.checked == true) {
+				paramProducts.push({
+					"id" : product[i]
+				});
+			}
+		}
+	}
+	var paramMarkets = [];
+	var markets = JSON.parse(localstorage.getItem("markets"));
+	if(markets != null){
+		var marketsList = markets.markets;
+		for (i = 0; i < marketsList.length; i++) {
+			market = marketsList[i];
+			if (market.checked == true) {
+				paramMarkets.push({
+				"id" : product[i]
+				});
+			}
+		}
+	}
+
+	var xhr = new XMLHttpRequest();
+	var url = "http://34.204.253.238:8080/concentrador/rest/quotation/";
+	var params = JSON.stringify(paramProducts) + "&"
+			+ JSON.stringify(paramMarkets) + "&" + value;
+	xhr.open("POST", url, true);
+	// Send the proper header information along with the request
+	xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	var response = "";
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState === 4) {
 			if (xhr.status === 200) {
@@ -273,31 +329,53 @@ function createAumentedLine(line, reg, i) {
 function savePreferences() {
 	localstorage = window.localStorage;
 	productos = document.getElementsByName("checkboxProductos");
+	var prods = {};
+	var jsonProd = [];
+	prods.productTypes = jsonProd;
 	for (e = 0; e < productos.length; e++) {
-		if (productos[e].checked == true) {
-			localStorage.setItem(productos[e], "1");
-		}
+		labelProd = document.getElementById("label" + productos[e].id);
+		prods.productTypes.push({
+			"id" : productos[e].value,
+			"description" : labelProd.innerHTML,
+			"checked" : productos[e].checked
+		});
 	}
+	console.log(JSON.stringify(prods));
+	localstorage.setItem("products", JSON.stringify(prods));
+
 	mercados = document.getElementsByName("checkboxMercados");
-	for (e = 0; e < productos.length; e++) {
-		if (mercados[e].checked == true) {
-			localStorage.setItem(mercados[e], "1");
-		}
+	var markets = {};
+	jsonMark = [];
+	markets.markets = jsonMark;
+	for (e = 0; e < mercados.length; e++) {
+		labelMercado = document.getElementById("label" + mercados[e].id);
+		markets.markets.push({
+			"id" : mercados[e].value,
+			"description" : labelMercado.innerHTML,
+			"checked" : mercados[e].checked
+		});
 	}
+	console.log(JSON.stringify(markets));
+	localstorage.setItem("markets", JSON.stringify(markets));
 }
 
 function loadPreferences() {
 	localstorage = window.localStorage;
-	productos = document.getElementsByName("checkboxProductos");
-	for (e = 0; e < productos.length; e++) {
-		if (localStorage.getItem(productos[e].value) == "1") {
-			productos[e].checked = true;
+	var markets = JSON.parse(localstorage.getItem("markets"));
+	if (markets != null) {
+		var marketsList = markets.markets;
+		for (i = 0; i < marketsList.length; i++) {
+			market = marketsList[i];
+			document.getElementById("checkbox" + market.id).checked = (market.checked == true);
 		}
 	}
-	mercados = document.getElementsByName("checkboxMercados");
-	for (e = 0; e < productos.length; e++) {
-		if (localStorage.getItem(mercados[e].value) == "1") {
-			mercados[e].checked = true;
+	
+	var productTypes = JSON.parse(localstorage.getItem("products"));
+	if (productTypes != null) {
+		var productTypesList = productTypes.productTypes;
+		for (i = 0; i < productTypesList.length; i++) {
+			product = productTypesList[i];
+			document.getElementById("checkbox" + product.id).checked = (product.checked == true);
 		}
 	}
 }
