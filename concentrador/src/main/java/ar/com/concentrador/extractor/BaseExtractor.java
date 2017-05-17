@@ -15,12 +15,20 @@ import ar.com.concentrador.model.Quotes;
 public abstract class BaseExtractor {
 	private static final String USER_AGENT = "Mozilla/5.0";
 	private static final int TIME_OUT_SECONDS = 60;
+	protected final String codeExtractor;
 	
     private static final Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
 
 	public abstract String getMarket();
-	public abstract String getCodeExtractor();
 	public abstract List<Quotes> getQuotes();
+	
+	protected BaseExtractor(String codeExtractor){
+		this.codeExtractor = codeExtractor;
+	}
+	
+	public String getCodeExtractor(){
+		return this.codeExtractor;
+	}
 	
 	protected byte[] call(String stringUrl) { 
 		HttpURLConnection con = null;
@@ -52,7 +60,7 @@ public abstract class BaseExtractor {
 			}
 		}
 	}
-	
+		
 	protected Quotes createQuotes() {
 		Quotes q = new Quotes();
 		q.setMarket(this.getMarket());

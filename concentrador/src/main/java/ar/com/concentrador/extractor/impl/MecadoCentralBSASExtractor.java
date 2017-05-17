@@ -40,7 +40,6 @@ import ar.com.concentrador.extractor.BaseExtractor;
 import ar.com.concentrador.model.Quotes;
 
 public class MecadoCentralBSASExtractor extends BaseExtractor {
-	private static final String CODE_EXTRACTOR = "02";
 	private static final String URL = "http://www.mercadocentral.gob.ar/sites/default/files/precios_mayoristas/PM-Hortalizas-%s.zip";
 	private static final int BUFFER = 2048;
 	private static final char[] CHAR_TO_REMOVE = {};
@@ -49,7 +48,8 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 	private Map<String, String> mapPackage;
 	private Map<Integer, String> mapMonth;
 
-	public MecadoCentralBSASExtractor() {
+	public MecadoCentralBSASExtractor(String codeExtractor) {
+		super(codeExtractor);
 		this.mapPackage = new HashMap<>();
 		this.mapPackage.put("AP", "ARGEN-POOL");
 		this.mapPackage.put("A", "ATADO");
@@ -85,11 +85,6 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 		this.mapMonth.put(10, "Oct");
 		this.mapMonth.put(11, "Nov");
 		this.mapMonth.put(12, "Dic");
-	}
-
-	@Override
-	public String getCodeExtractor() {
-		return CODE_EXTRACTOR;
 	}
 	
 	@Override

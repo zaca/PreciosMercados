@@ -142,7 +142,6 @@ public class QuotesBO {
 			try {
 
 				this.listQuotes.put(base.getCodeExtractor(), base.getQuotes());
-				//this.listQuotes.addAll(base.getQuotes());
 				if (logger.isInfoEnabled()) {
 					this.logger.info("Recuperando desde el extractor: " + base.getCodeExtractor());
 				}

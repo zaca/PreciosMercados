@@ -61,7 +61,7 @@ var app = {
 			filter = filterText.toUpperCase();
 			;
 		}
-		var response = callRestService(container, filter);
+		var response = callPostService(container, filter);
 	},
 
 	configButtonClick : function() {
@@ -138,36 +138,42 @@ function callPostService(container, value) {
 
 	localstorage = window.localStorage;
 	var paramProducts = [];
-	var products = JSON.parse(localstorage.getItem("products"));
-	if(products != null){
-		var productsList = products.markets;
-		for (i = 0; i < productsList.length; i++) {
-			product = productsList[i];
-			if (product.checked == true) {
-				paramProducts.push({
-					"id" : product[i]
-				});
-			}
-		}
-	}
 	var paramMarkets = [];
+	var params = {};
+
 	var markets = JSON.parse(localstorage.getItem("markets"));
-	if(markets != null){
+	if (markets != null) {
 		var marketsList = markets.markets;
 		for (i = 0; i < marketsList.length; i++) {
 			market = marketsList[i];
 			if (market.checked == true) {
 				paramMarkets.push({
-				"id" : product[i]
+				"id" : market[i]
 				});
 			}
 		}
 	}
-
+	
+	var productTypes = JSON.parse(localstorage.getItem("products"));
+	if (productTypes != null) {
+		var productTypesList = productTypes.productTypes;
+		for (i = 0; i < productTypesList.length; i++) {
+			product = productTypesList[i];
+			if (product.checked == true) {
+				paramProducts.push({
+					"id" : product[i].id
+				});
+			}
+		}
+	}
+	
+	var params = {};
+	params.products = paramProducts;
+	params.markets = paramMarkets;
+	params.value = value;
+	
 	var xhr = new XMLHttpRequest();
 	var url = "http://34.204.253.238:8080/concentrador/rest/quotation/";
-	var params = JSON.stringify(paramProducts) + "&"
-			+ JSON.stringify(paramMarkets) + "&" + value;
 	// Send the proper header information along with the request
 	xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	var response = "";
@@ -339,7 +345,6 @@ function savePreferences() {
 			"checked" : productos[e].checked
 		});
 	}
-	console.log(JSON.stringify(prods));
 	localstorage.setItem("products", JSON.stringify(prods));
 
 	mercados = document.getElementsByName("checkboxMercados");

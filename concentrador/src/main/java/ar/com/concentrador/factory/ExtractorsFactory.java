@@ -21,10 +21,10 @@ public class ExtractorsFactory {
     @ApplicationScoped
     public List<BaseExtractor> produceExtractors() {
     	List<BaseExtractor> list = new ArrayList<>();
-    	list.add(new MecadoCentralBSASExtractor());
-    	list.add(new AbastoCentralMDQExtractor(1,ProductTypes.FRUTAS));
-    	list.add(new AbastoCentralMDQExtractor(2, ProductTypes.VERDURAS));
-    	list.add(new AbastoCentralMDQExtractor(3,ProductTypes.HORTALIZAS));
+    	list.add(new MecadoCentralBSASExtractor("01"));
+    	list.add(new AbastoCentralMDQExtractor("02",1,ProductTypes.FRUTAS));
+    	list.add(new AbastoCentralMDQExtractor("03",2, ProductTypes.VERDURAS));
+    	list.add(new AbastoCentralMDQExtractor("04",3,ProductTypes.HORTALIZAS));
     	
         return list; 
     }

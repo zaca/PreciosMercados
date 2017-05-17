@@ -1,7 +1,7 @@
 package ar.com.concentrador.enums;
 
 public enum ProductTypes {
-	FRUTAS("Frutas", "F"), HORTALIZAS("Hortalizas", "H"), VERDURAS("Verduras", "V");
+	FRUTAS("Frutas", "1"), HORTALIZAS("Hortalizas", "2"), VERDURAS("Verduras", "3");
 
 	private String descripcion;
 	private String id;
