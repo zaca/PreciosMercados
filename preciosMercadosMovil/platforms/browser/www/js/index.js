@@ -148,7 +148,7 @@ function callPostService(container, value) {
 			market = marketsList[i];
 			if (market.checked == true) {
 				paramMarkets.push({
-				"id" : product[i]
+				"id" : market.id
 				});
 			}
 		}
@@ -161,7 +161,7 @@ function callPostService(container, value) {
 			product = productTypesList[i];
 			if (product.checked == true) {
 				paramProducts.push({
-					"id" : product[i].id
+					"id" : product.id
 				});
 			}
 		}
@@ -171,11 +171,10 @@ function callPostService(container, value) {
 	params.products = paramProducts;
 	params.markets = paramMarkets;
 	params.value = value;
-	
+	console.log(JSON.stringify(params));
 	var xhr = new XMLHttpRequest();
-	var url = "http://34.204.253.238:8080/concentrador/rest/quotation/";
+	var url = "http://34.204.253.238:8080/concentrador/rest/quotation/byProductsMarketsValue";
 	// Send the proper header information along with the request
-	xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	var response = "";
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState === 4) {
@@ -189,6 +188,9 @@ function callPostService(container, value) {
 	};
 	try {
 		xhr.open("POST", url, true);
+		xhr.setRequestHeader("Content-type", "application/json; charset=ISO-8859-1");
+		//xhr.setRequestHeader("Content-length", params.length);
+		//xhr.setRequestHeader("Connection", "close");
 		xhr.send(params);
 	} catch (err) {
 		container.innerHTML = err.message;
@@ -264,18 +266,11 @@ function visualization(arr, element) {
 			line.appendChild(td4);
 		}
 
-		// table.innerHTML = "<tr><td>"+ arr[i].description+"</td><td>"+
-		// arr[i].maxValue +"</td><td>"+ arr[i].minValue
-		// +"</td><td>"+arr[i].source+"</td></tr>"
 		line = document.createElement("TR");
-		// createAumentedLine(line, arr[i], i);
-		line.setAttribute('class', 'content');
-		line.setAttribute('onmouseleave', 'this.style.fontSize = "10px"');
-		line.setAttribute('onmouseover', 'this.style.fontSize = "20px"');
+		line.setAttribute('class', 'linecontent');
+		//line.setAttribute('onmouseleave', 'this.style.fontSize = "10px"');
+		//line.setAttribute('onmouseover', 'this.style.fontSize = "20px"');
 		table.appendChild(line);
-		// line.addEventListener('mouseleave', this.style.fontSize = "16px";);
-		// line.addEventListener('mouseover', function(){line.style.fontSize =
-		// "20px";});
 
 		td1 = document.createElement("TD");
 		cellContent1 = document.createTextNode(arr[i].description);

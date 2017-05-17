@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -90,8 +91,10 @@ public class QuotationEndpoint {
 	
 	@Path("/byProductsMarketsValue")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=ISO-8859-1")
-	public Response byProductsMarketsValue(@PathParam("products") List<String> products, 
-			@PathParam("markets") List<String> markets, @PathParam("code") String code) {
+	public Response byProductsMarketsValue(@FormParam("products") List<String> products, 
+			@FormParam("markets") List<String> markets, @FormParam("code") String code) {
+		
+		logger.error("Products " + products);
 		if (products == null) {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
