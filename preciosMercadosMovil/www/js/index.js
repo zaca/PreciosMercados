@@ -168,7 +168,6 @@ function callPostService(container, value) {
 	var url = "http://34.204.253.238:8080/concentrador/rest/quotation/";
 	var params = JSON.stringify(paramProducts) + "&"
 			+ JSON.stringify(paramMarkets) + "&" + value;
-	xhr.open("POST", url, true);
 	// Send the proper header information along with the request
 	xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	var response = "";
@@ -183,8 +182,8 @@ function callPostService(container, value) {
 		}
 	};
 	try {
-		xhr.open('GET', url, true);
-		xhr.send();
+		xhr.open("POST", url, true);
+		xhr.send(params);
 	} catch (err) {
 		container.innerHTML = err.message;
 	}

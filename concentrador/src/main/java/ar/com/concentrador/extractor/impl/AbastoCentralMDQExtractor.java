@@ -24,8 +24,8 @@ public class AbastoCentralMDQExtractor extends BaseExtractor {
 	private int urlParam;
 	private ProductTypes productType;
 	
-	public AbastoCentralMDQExtractor(int i, ProductTypes pt) {
-		this.urlParam = i;
+	public AbastoCentralMDQExtractor(int urlParam, ProductTypes pt) {
+		this.urlParam = urlParam;
 		this.productType = pt;
 	}
 

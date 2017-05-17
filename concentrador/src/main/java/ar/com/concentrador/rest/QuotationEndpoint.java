@@ -45,28 +45,6 @@ public class QuotationEndpoint {
 		return byFilter(q);
 	}	
 	
-	@Path("/byProductsMarketsValue")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=ISO-8859-1")
-	public Response byProductsMarketsValue(@PathParam("products") List<String> products, 
-			@PathParam("markets") List<String> markets, @PathParam("code") String code) {
-		if (products == null) {
-			return Response.status(Status.BAD_REQUEST).build();
-		}
-		
-		if (markets == null) {
-			return Response.status(Status.BAD_REQUEST).build();
-		}
-		
-		if (code == null) {
-			return Response.status(Status.BAD_REQUEST).build();
-		}
-		
-		Quotes q = new Quotes();
-		q.setCode(code);
-		
-		return byFilter(q, products, markets);
-	}
-	
 	@GET
 	@Path("/byFilter/{code}/{package}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=ISO-8859-1")
@@ -108,6 +86,28 @@ public class QuotationEndpoint {
 		q.setValue(value);
 		
 		return byFilter(q);
+	}
+	
+	@Path("/byProductsMarketsValue")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=ISO-8859-1")
+	public Response byProductsMarketsValue(@PathParam("products") List<String> products, 
+			@PathParam("markets") List<String> markets, @PathParam("code") String code) {
+		if (products == null) {
+			return Response.status(Status.BAD_REQUEST).build();
+		}
+		
+		if (markets == null) {
+			return Response.status(Status.BAD_REQUEST).build();
+		}
+		
+		if (code == null) {
+			return Response.status(Status.BAD_REQUEST).build();
+		}
+		
+		Quotes q = new Quotes();
+		q.setCode(code);
+		
+		return byFilter(q, products, markets);
 	}
 	
 	@GET
