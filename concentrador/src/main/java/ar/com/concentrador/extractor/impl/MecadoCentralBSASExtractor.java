@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -129,6 +130,7 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 				q.setMaxValue(formatMoneyValue(formatValueFromCell(nextRow.getCell(initCol + 8)), CHAR_TO_REMOVE));
 				q.setMinValue(formatMoneyValue(formatValueFromCell(nextRow.getCell(initCol + 10)), CHAR_TO_REMOVE));
 				q.setDescription(formatDescriptionValue(q.getCode(), q.getPackageDes(), q.getValue()));
+	            q.setDiff(new BigDecimal(0));
 
 				information.add(q);
 			}

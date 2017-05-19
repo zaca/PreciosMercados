@@ -1,5 +1,6 @@
 package ar.com.concentrador.extractor.impl;
 
+import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
@@ -55,6 +56,7 @@ public class AbastoCentralMDQExtractor extends BaseExtractor {
 	            q.setValue(formatDescriptionValue(tds.get(3).text()));
 	            q.setMaxValue(formatMoneyValue(tds.get(4).text(), CHAR_TO_REMOVE));
 	            q.setMinValue(formatMoneyValue(tds.get(5).text(), CHAR_TO_REMOVE));
+	            q.setDiff(new BigDecimal(0));
 	            
 	            information.add(q);
 	        }

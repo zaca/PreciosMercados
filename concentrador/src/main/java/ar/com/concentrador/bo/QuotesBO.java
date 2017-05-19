@@ -134,7 +134,7 @@ public class QuotesBO {
 			
 			if (oldList != null) {
 				for(Quotes qNew: newList) {
-					Optional<Quotes> o = oldList.stream().filter( b -> b.getCode().equals(qNew.getCode())).findFirst();
+					Optional<Quotes> o = oldList.stream().filter( b -> b.getDescription().equals(qNew.getDescription())).findFirst();
 					if (o != null && o.get() != null) {
 						qNew.setDiff( calculateDiff(qNew, o.get()) );
 					}
