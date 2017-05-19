@@ -139,7 +139,6 @@ function callPostService(container, value) {
 	localstorage = window.localStorage;
 	var paramProducts = [];
 	var paramMarkets = [];
-	var params = {};
 
 	var markets = JSON.parse(localstorage.getItem("markets"));
 	if (markets != null) {
@@ -147,9 +146,7 @@ function callPostService(container, value) {
 		for (i = 0; i < marketsList.length; i++) {
 			market = marketsList[i];
 			if (market.checked == true) {
-				paramMarkets.push({
-				"id" : market.id
-				});
+				paramMarkets.push(market.id);
 			}
 		}
 	}
@@ -160,20 +157,21 @@ function callPostService(container, value) {
 		for (i = 0; i < productTypesList.length; i++) {
 			product = productTypesList[i];
 			if (product.checked == true) {
-				paramProducts.push({
-					"id" : product.id
-				});
+				paramProducts.push(product.id);
 			}
 		}
 	}
 	
+	//params.products = paramProducts;
+	var paramsContainer = [];
 	var params = {};
 	params.products = paramProducts;
 	params.markets = paramMarkets;
-	params.value = value;
-	console.log(JSON.stringify(params));
+	params.code = value;
+	paramsContainer.push(params);
 	var xhr = new XMLHttpRequest();
-	var url = "http://34.204.253.238:8080/concentrador/rest/quotation/byProductsMarketsValue";
+	var url = "http://localhost:8080/concentrador/rest/quotation/byProductsMarketsValue";
+	//var url = "http://34.204.253.238:8080/concentrador/rest/quotation/byProductsMarketsValue";
 	// Send the proper header information along with the request
 	var response = "";
 	xhr.onreadystatechange = function() {
@@ -191,7 +189,8 @@ function callPostService(container, value) {
 		xhr.setRequestHeader("Content-type", "application/json; charset=ISO-8859-1");
 		//xhr.setRequestHeader("Content-length", params.length);
 		//xhr.setRequestHeader("Connection", "close");
-		xhr.send(params);
+		console.log(JSON.stringify(paramsContainer));
+		xhr.send(JSON.stringify(paramsContainer));
 	} catch (err) {
 		container.innerHTML = err.message;
 	}

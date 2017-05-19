@@ -6,8 +6,10 @@ import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -20,6 +22,7 @@ import org.slf4j.Logger;
 import ar.com.concentrador.bo.QuotesBO;
 import ar.com.concentrador.enums.ProductTypes;
 import ar.com.concentrador.extractor.BaseExtractor;
+import ar.com.concentrador.model.Parameters;
 import ar.com.concentrador.model.Quotes;
 
 @Stateless
@@ -89,12 +92,22 @@ public class QuotationEndpoint {
 		return byFilter(q);
 	}
 	
+	@POST
 	@Path("/byProductsMarketsValue")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=ISO-8859-1")
-	public Response byProductsMarketsValue(@FormParam("products") List<String> products, 
+	@Consumes(MediaType.APPLICATION_JSON + "; charset=ISO-8859-1")
+	
+	/*
+	  public Response byProductsMarketsValue(@FormParam("products") List<String> products, 
 			@FormParam("markets") List<String> markets, @FormParam("code") String code) {
+			*/
+	public Response byProductsMarketsValue(Parameters parameters) {
 		
-		logger.error("Products " + products);
+		List<String> products = parameters.getProducts();
+		List<String> markets = parameters.getMarkets();
+		String code = parameters.getCode();
+		logger.info("Products " + code);
+		
 		if (products == null) {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
