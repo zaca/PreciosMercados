@@ -7,11 +7,9 @@ import java.util.Map;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -22,7 +20,9 @@ import org.slf4j.Logger;
 import ar.com.concentrador.bo.QuotesBO;
 import ar.com.concentrador.enums.ProductTypes;
 import ar.com.concentrador.extractor.BaseExtractor;
-import ar.com.concentrador.model.Parameters;
+import ar.com.concentrador.extractor.impl.AbastoCentralMDQExtractor;
+import ar.com.concentrador.extractor.impl.MecadoCentralBSASExtractor;
+import ar.com.concentrador.model.FilterQuotes;
 import ar.com.concentrador.model.Quotes;
 
 @Stateless
@@ -35,96 +35,33 @@ public class QuotationEndpoint {
 	@Inject
 	private QuotesBO quotesBO;
 	
-	@GET
-	@Path("/byFilter/{code}")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=ISO-8859-1")
-	public Response byCode(@PathParam("code") String code) {
-		if (code == null) {
-			return Response.status(Status.BAD_REQUEST).build();
-		}
-		
-		Quotes q = new Quotes();
-		q.setCode(code);
-		
-		return byFilter(q);
-	}	
-	
-	@GET
-	@Path("/byFilter/{code}/{package}")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=ISO-8859-1")
-	public Response byCode(@PathParam("code") String code, @PathParam("package") String packageDes) {
-		if (code == null) {
-			return Response.status(Status.BAD_REQUEST).build();
-		}
-		
-		if (packageDes == null) {
-			return Response.status(Status.BAD_REQUEST).build();
-		}
-		
-		Quotes q = new Quotes();
-		q.setCode(code);
-		q.setPackageDes(packageDes);
-		
-		return byFilter(q);
-	}	
-	
-	@GET
-	@Path("/byFilter/{code}/{package}/{value}")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=ISO-8859-1")
-	public Response byCode(@PathParam("code") String code, @PathParam("package") String packageDes, @PathParam("value") String value) {
-		if (code == null) {
-			return Response.status(Status.BAD_REQUEST).build();
-		}
-		
-		if (packageDes == null) {
-			return Response.status(Status.BAD_REQUEST).build();
-		}
-		
-		if (value == null) {
-			return Response.status(Status.BAD_REQUEST).build();
-		}
-		
-		Quotes q = new Quotes();
-		q.setCode(code);
-		q.setPackageDes(packageDes);
-		q.setValue(value);
-		
-		return byFilter(q);
-	}
-	
 	@POST
-	@Path("/byProductsMarketsValue")
+	@Path("/byFilter")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=ISO-8859-1")
 	@Consumes(MediaType.APPLICATION_JSON + "; charset=ISO-8859-1")
-	
-	/*
-	  public Response byProductsMarketsValue(@FormParam("products") List<String> products, 
-			@FormParam("markets") List<String> markets, @FormParam("code") String code) {
-			*/
-	public Response byProductsMarketsValue(Parameters parameters) {
-		
-		List<String> products = parameters.getProducts();
-		List<String> markets = parameters.getMarkets();
-		String code = parameters.getCode();
-		logger.info("Products " + code);
-		
-		if (products == null) {
+	public Response byFilter(FilterQuotes parameters) {
+		if (parameters == null) {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
 		
-		if (markets == null) {
-			return Response.status(Status.BAD_REQUEST).build();
-		}
-		
-		if (code == null) {
-			return Response.status(Status.BAD_REQUEST).build();
-		}
-		
-		Quotes q = new Quotes();
-		q.setCode(code);
-		
-		return byFilter(q, products, markets);
+		return byFilter(parameters.getQuotes(), parameters.getProducts(), parameters.getMarkets());
 	}
+
+	@GET
+	@Path("/listMarket")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=ISO-8859-1")
+	public Response listMarket() {
+		try {
+			Map<String, String> map = new HashMap<>();
+			map.put(MecadoCentralBSASExtractor.CODE_MARKET, "Mercado Central de BsAs");
+			map.put(AbastoCentralMDQExtractor.CODE_MARKET, "Mercado de Mar del Plata");
+			
+			return Response.ok(map).build();
+		} catch (Exception e) {
+			logger.error("Error al recuperar codigos de Mercados.", e);
+			return Response.serverError().build();
+		}		
+	}	
 	
 	@GET
 	@Path("/listCodes")
@@ -153,21 +90,10 @@ public class QuotationEndpoint {
 			return Response.serverError().build();
 		}		
 	}
-	
-	private Response byFilter(Quotes q) {
+
+	private Response byFilter(Quotes q, List<String> products,List<String> markets) {
 		try {
-			q.setCode( BaseExtractor.deAccent(q.getCode()) );
-			
-			return Response.ok(quotesBO.retriveFilterList(q)).build();
-		} catch (Exception e) {
-			logger.error("Error al recuperar productos por filtro. Filtro" + q, e);
-			return Response.serverError().build();
-		}
-	}
-	
-	private Response byFilter(Quotes q,List<String> products,List<String> markets) {
-		try {
-			q.setCode( BaseExtractor.deAccent(q.getCode()) );
+			q.setCode( BaseExtractor.deAccent(q.getCode()));
 			
 			return Response.ok(quotesBO.retriveFilterList(q, markets, products)).build();
 		} catch (Exception e) {

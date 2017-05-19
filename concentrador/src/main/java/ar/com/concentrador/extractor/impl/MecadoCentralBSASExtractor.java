@@ -36,20 +36,23 @@ import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.StringUtil;
 
+import ar.com.concentrador.enums.ProductTypes;
 import ar.com.concentrador.extractor.BaseExtractor;
 import ar.com.concentrador.model.Quotes;
 
 public class MecadoCentralBSASExtractor extends BaseExtractor {
-	private static final String URL = "http://www.mercadocentral.gob.ar/sites/default/files/precios_mayoristas/PM-Hortalizas-%s.zip";
+	public static final String CODE_MARKET = "BSAS";
+	private static final String URL = "http://www.mercadocentral.gob.ar/sites/default/files/%s-%s.zip";
+	
 	private static final int BUFFER = 2048;
 	private static final char[] CHAR_TO_REMOVE = {};
-	private static final String CODE_MARKET = "BSAS";
 	
 	private Map<String, String> mapPackage;
 	private Map<Integer, String> mapMonth;
-
-	public MecadoCentralBSASExtractor(String codeExtractor) {
-		super(codeExtractor);
+	
+	public MecadoCentralBSASExtractor(String codeExtractor, String urlParam, ProductTypes pt) {
+		super(codeExtractor, urlParam, pt);
+		
 		this.mapPackage = new HashMap<>();
 		this.mapPackage.put("AP", "ARGEN-POOL");
 		this.mapPackage.put("A", "ATADO");
@@ -118,6 +121,7 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 
 				Quotes q = createQuotes();
 				q.setDate(date);
+				q.setProductType(this.productType.getId());
 				q.setCode(formatCodeValue(formatValueFromCell(nextRow.getCell(initCol)) + " " + formatValueFromCell(nextRow.getCell(initCol + 1))));
 				q.setSource(formatDescriptionValue(formatValueFromCell(nextRow.getCell(initCol + 2))));
 				q.setPackageDes(this.formatPackage(formatValueFromCell(nextRow.getCell(initCol + 3))));
@@ -162,7 +166,7 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 				day = "0" + day; 
 			}
 
-			urls.add( String.format(URL, day + "-" + month + "-" + year) );
+			urls.add( String.format(URL, this.urlParam,  day + "-" + month + "-" + year) );
 			try {
 				data = this.call(urls.get(urls.size()-1) );
 			} catch (Exception e) {

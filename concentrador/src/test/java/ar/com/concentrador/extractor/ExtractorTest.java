@@ -10,8 +10,8 @@ import ar.com.concentrador.extractor.impl.MecadoCentralBSASExtractor;
 public class ExtractorTest {
 	@Test
 	public void executeExtractors() {
-		BaseExtractor exMDQ = new AbastoCentralMDQExtractor("01", 1, ProductTypes.FRUTAS);
-		BaseExtractor exBSAS = new MecadoCentralBSASExtractor("02");
+		BaseExtractor exMDQ = new AbastoCentralMDQExtractor("01", "1", ProductTypes.FRUTAS);
+		BaseExtractor exBSAS = new MecadoCentralBSASExtractor("02", "precios_mayoristas/PM-Frutas", ProductTypes.FRUTAS);
 		
 		Assert.assertFalse(exBSAS.getQuotes().isEmpty());
 		Assert.assertFalse(exMDQ.getQuotes().isEmpty());

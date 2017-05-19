@@ -15,16 +15,17 @@ import ar.com.concentrador.extractor.impl.MecadoCentralBSASExtractor;
 @Singleton
 public class ExtractorsFactory {
 	
-	
-	
     @Produces
     @ApplicationScoped
     public List<BaseExtractor> produceExtractors() {
     	List<BaseExtractor> list = new ArrayList<>();
-    	list.add(new MecadoCentralBSASExtractor("01"));
-    	list.add(new AbastoCentralMDQExtractor("02",1,ProductTypes.FRUTAS));
-    	list.add(new AbastoCentralMDQExtractor("03",2, ProductTypes.VERDURAS));
-    	list.add(new AbastoCentralMDQExtractor("04",3,ProductTypes.HORTALIZAS));
+    	
+    	list.add(new MecadoCentralBSASExtractor("01", "precios_mayoristas/PM-Hortalizas", ProductTypes.HORTALIZAS));
+    	list.add(new MecadoCentralBSASExtractor("05", "precios_mayoristas/PM-Frutas", ProductTypes.FRUTAS));
+    	
+    	list.add(new AbastoCentralMDQExtractor("02", "1", ProductTypes.FRUTAS));
+    	list.add(new AbastoCentralMDQExtractor("03", "2", ProductTypes.VERDURAS));
+    	list.add(new AbastoCentralMDQExtractor("04", "3", ProductTypes.HORTALIZAS));
     	
         return list; 
     }

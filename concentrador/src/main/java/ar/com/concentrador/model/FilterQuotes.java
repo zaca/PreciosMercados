@@ -2,12 +2,19 @@ package ar.com.concentrador.model;
 
 import java.util.List;
 
-public class Parameters {
+public class FilterQuotes {
 	
 	private List<String> products;
 	private List<String> markets;
-	private String code;
 	
+	private Quotes quotes;
+	
+	public Quotes getQuotes() {
+		return quotes;
+	}
+	public void setQuotes(Quotes quotes) {
+		this.quotes = quotes;
+	}
 	public List<String> getProducts() {
 		return products;
 	}
@@ -19,15 +26,5 @@ public class Parameters {
 	}
 	public void setMarkets(List<String> markets) {
 		this.markets = markets;
-	}
-	public String getCode() {
-		return code;
-	}
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-		
-	
-
+	}	
 }

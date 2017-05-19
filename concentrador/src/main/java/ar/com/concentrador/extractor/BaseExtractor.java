@@ -10,20 +10,26 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 
+import ar.com.concentrador.enums.ProductTypes;
 import ar.com.concentrador.model.Quotes;
 
 public abstract class BaseExtractor {
 	private static final String USER_AGENT = "Mozilla/5.0";
 	private static final int TIME_OUT_SECONDS = 60;
-	protected final String codeExtractor;
 	
     private static final Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+    
+	protected final String codeExtractor;
+	protected final String urlParam;
+	protected final ProductTypes productType;
 
 	public abstract String getMarket();
 	public abstract List<Quotes> getQuotes();
 	
-	protected BaseExtractor(String codeExtractor){
+	protected BaseExtractor(String codeExtractor, String urlParam, ProductTypes pt){
 		this.codeExtractor = codeExtractor;
+		this.urlParam = urlParam;
+		this.productType = pt;
 	}
 	
 	public String getCodeExtractor(){

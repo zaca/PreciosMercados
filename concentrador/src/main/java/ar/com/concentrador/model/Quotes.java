@@ -16,6 +16,7 @@ public class Quotes {
 	private String source;
 	private String packageDes;
 	private String value;
+	private BigDecimal diff;
 
 	public String getMarket() {
 		return market;
@@ -83,6 +84,12 @@ public class Quotes {
 	public void setProductType(String productType) {
 		this.productType = productType;
 	}
+	public BigDecimal getDiff() {
+		return diff;
+	}
+	public void setDiff(BigDecimal diff) {
+		this.diff = diff;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -91,6 +98,7 @@ public class Quotes {
 		result = prime * result + ((codeExtractor == null) ? 0 : codeExtractor.hashCode());
 		result = prime * result + ((date == null) ? 0 : date.hashCode());
 		result = prime * result + ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((diff == null) ? 0 : diff.hashCode());
 		result = prime * result + ((market == null) ? 0 : market.hashCode());
 		result = prime * result + ((maxValue == null) ? 0 : maxValue.hashCode());
 		result = prime * result + ((minValue == null) ? 0 : minValue.hashCode());
@@ -128,6 +136,11 @@ public class Quotes {
 			if (other.description != null)
 				return false;
 		} else if (!description.equals(other.description))
+			return false;
+		if (diff == null) {
+			if (other.diff != null)
+				return false;
+		} else if (!diff.equals(other.diff))
 			return false;
 		if (market == null) {
 			if (other.market != null)
@@ -171,7 +184,6 @@ public class Quotes {
 		return "Quotes [market=" + market + ", productType=" + productType + ", codeExtractor=" + codeExtractor
 				+ ", code=" + code + ", description=" + description + ", date=" + date + ", minValue=" + minValue
 				+ ", maxValue=" + maxValue + ", source=" + source + ", packageDes=" + packageDes + ", value=" + value
-				+ "]";
-	}
-		
+				+ ", diff=" + diff + "]";
+	}	
 }

@@ -15,18 +15,14 @@ import ar.com.concentrador.extractor.BaseExtractor;
 import ar.com.concentrador.model.Quotes;
 
 public class AbastoCentralMDQExtractor extends BaseExtractor {
-	private static final String CODE_MARKET = "MDQ";
+	public static final String CODE_MARKET = "MDQ";
 	private static final String URL = "http://www.abastocentralmdp.com/lista.php?id_rubro=%s";
+	
 	private static final char[] CHAR_TO_REMOVE = {'$', '-'}; 
 	private static final Charset CHARSET = Charset.forName("ISO-8859-1");
 	
-	private int urlParam;
-	private ProductTypes productType;
-	
-	public AbastoCentralMDQExtractor(String codeExtractor, int urlParam, ProductTypes pt) {
-		super(codeExtractor);
-		this.urlParam = urlParam;
-		this.productType = pt;
+	public AbastoCentralMDQExtractor(String codeExtractor, String urlParam, ProductTypes pt) {
+		super(codeExtractor, urlParam, pt);
 	}
 	
 	@Override
