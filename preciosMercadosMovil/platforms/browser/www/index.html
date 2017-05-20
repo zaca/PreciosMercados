@@ -51,8 +51,8 @@
 			<div class="text-filter" id="textFilterContainer">
 				<input class="text-field-filter" id="filterText"
 					maxlength="256" name="field-2" placeholder="Example Text"
-					required="required" type="text"> <img class="image"
-					src="img/search-icon.png" width="36" id="searchButton">
+					required="required" type="text"> 
+					<img class="image" src="img/search-icon.png" width="36" id="searchButton">
 					<img src="img/config.png" width="35" id="configButton">
 			</div>
 			<div class="select-filter" id="filtersSelectContainer">
@@ -66,38 +66,38 @@
 
 	<div id="configContainer" class="configcontainer" style="display:none;">
 		<div class="section">
-			<div class="text-block-2">Precios mercados - Configuracion</div>
+			<div class="text-title">Precios mercados - Configuracion</div>
 		</div>
-		<div class="section-2">
+		<div class="configFilterContainer">
 			<div>
-				<label class="field-label">Mercados</label>
-				<div class="mercadoselectorcontainer">
+				<label class="subtitle">Mercados</label>
+				<div class="selectorContainer">
 					<div>
 						<input value="BSAS" id="checkboxBSAS" name="checkboxMercados" type="checkbox">
-						<label id="labelcheckboxBSAS" for="checkboxBSAS">Mercado central de Bs As</label>
+						<label id="labelcheckboxBSAS" for="checkboxBSAS" class="configLabel">Mercado central de Bs As</label>
 					</div>
 					<div>
 						<input value="MDQ" id="checkboxMDQ" name="checkboxMercados" type="checkbox">
-						<label id="labelcheckboxMDQ" for="checkboxMDQ">Mar del Plata</label>
+						<label id="labelcheckboxMDQ" for="checkboxMDQ" class="configLabel">Mar del Plata</label>
 					</div>
 					<div>
-						<input  value="LP" id="checkboxLP" name="checkboxMercados" type="checkbox"> 
-						<label id="labelcheckboxLP" for="checkboxLP">La Plata</label>
+						<input  value="GOB" id="checkboxGob" name="checkboxMercados" type="checkbox"> 
+						<label id="labelcheckboxGob" for="checkboxGob" class="configLabel">Ministerio de Agroindustria Argentina</label>
 					</div>
 				</div>
-				<label class="field-label">Tipos de producto</label>
-				<div class="tipoproductocontainer">
+				<label class="subtitle">Tipos de producto</label>
+				<div class="selectorContainer">
 					<div>
 						<input value="2" id="checkbox2" name="checkboxProductos" type="checkbox">
-						<label id="labelcheckbox2" for="checkbox2">Hortalizas</label>
+						<label id="labelcheckbox2" for="checkbox2" class="configLabel">Hortalizas</label>
 					</div>
 					<div>
 						<input value="1" id="checkbox1" name="checkboxProductos" type="checkbox"> 
-						<label id="labelcheckbox1" for="checkbox1">Frutas</label>
+						<label id="labelcheckbox1" for="checkbox1" class="configLabel">Frutas</label>
 					</div>
 					<div>
 						<input value="3" id="checkbox3" name="checkboxProductos" type="checkbox">
-						<label id="labelcheckbox3" for="checkbox3">Verduras</label>
+						<label id="labelcheckbox3" for="checkbox3" class="configLabel">Verduras</label>
 					</div>
 				</div>
 			</div>
@@ -106,7 +106,7 @@
 			</div>
 		</div>
 	</div>
-
+	
 	<script type="text/javascript" src="cordova.js"></script>
 	<script type="text/javascript" src="js/index.js"></script>
 </body>

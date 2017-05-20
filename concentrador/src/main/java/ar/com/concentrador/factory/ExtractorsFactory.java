@@ -14,6 +14,7 @@ import ar.com.concentrador.extractor.BaseExtractor;
 import ar.com.concentrador.extractor.impl.AbastoCentralMDQExtractor;
 import ar.com.concentrador.extractor.impl.MecadoCentralBSASExtractor;
 import ar.com.concentrador.extractor.impl.MinisterioAgroindustriaGOBExtractor;
+import ar.com.concentrador.model.Market;
 
 @Singleton
 public class ExtractorsFactory {
@@ -39,12 +40,11 @@ public class ExtractorsFactory {
     
     @Produces
     @ApplicationScoped
-    public Map<String, String> produceMarketList() {
-		Map<String, String> map = new HashMap<>();
-		map.put(MecadoCentralBSASExtractor.CODE_MARKET, MecadoCentralBSASExtractor.NAME_MARKET);
-		map.put(MinisterioAgroindustriaGOBExtractor.CODE_MARKET, MinisterioAgroindustriaGOBExtractor.NAME_MARKET);
-		map.put(AbastoCentralMDQExtractor.CODE_MARKET, AbastoCentralMDQExtractor.NAME_MARKET);
-
-        return map; 
+    public List<Market> produceMarketList() {
+    	List<Market> markets = new ArrayList<>();
+		markets.add(new Market(MecadoCentralBSASExtractor.CODE_MARKET, MecadoCentralBSASExtractor.NAME_MARKET));
+		markets.add(new Market(MinisterioAgroindustriaGOBExtractor.CODE_MARKET, MinisterioAgroindustriaGOBExtractor.NAME_MARKET));
+		markets.add(new Market(AbastoCentralMDQExtractor.CODE_MARKET, AbastoCentralMDQExtractor.NAME_MARKET));
+        return markets; 
     }
 }

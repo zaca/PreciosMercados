@@ -1,6 +1,8 @@
 package ar.com.concentrador.rest;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +23,7 @@ import ar.com.concentrador.bo.QuotesBO;
 import ar.com.concentrador.enums.ProductTypes;
 import ar.com.concentrador.extractor.BaseExtractor;
 import ar.com.concentrador.model.FilterQuotes;
+import ar.com.concentrador.model.Market;
 import ar.com.concentrador.model.Quotes;
 
 @Stateless
@@ -34,7 +37,7 @@ public class QuotationEndpoint {
 	private QuotesBO quotesBO;
 	
 	@Inject
-	private Map<String, String> marketList;
+	private List<Market> marketList;
 	
 	@POST
 	@Path("/byFilter")
@@ -53,7 +56,7 @@ public class QuotationEndpoint {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=ISO-8859-1")
 	public Response listMarket() {
 		try {
-			return Response.ok(this.marketList).build();
+			return Response.ok(marketList).build();
 		} catch (Exception e) {
 			logger.error("Error al recuperar codigos de Mercados.", e);
 			return Response.serverError().build();

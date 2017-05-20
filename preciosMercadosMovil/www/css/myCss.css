@@ -1,8 +1,7 @@
 body {
 	font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
-	color: #333;
+	color: Cornsilk;
 	font-size: 14px;
-	line-height: 20px;
 }
 
 @media ( max-width : 479px) {
@@ -21,8 +20,8 @@ body {
 		margin-top: auto;
 		margin-bottom: auto;
 		float: none;
-		background-color: #008040;
 		/*
+		background-color: #ffedc8;
 			background-image: -webkit-linear-gradient(270deg, rgba(8, 168, 45, .77),
 			#454d42);
 		background-image: linear-gradient(180deg, rgba(8, 168, 45, .77), #454d42);
@@ -32,7 +31,6 @@ body {
 
 .header {
 	padding-top: 5;
-	color: #f8eeee;
 	font-size: 20px;
 	text-align: center;
 }
@@ -48,8 +46,6 @@ body {
 
 .tablecontent {
 	height: 100%;
-	padding-right: 10px;
-	padding-left: 10px;
 }
 
 .mainwindow {
@@ -59,16 +55,17 @@ body {
 }
 
 .linecontent {
+	border-radius: 15px;
 	height: 80%;
 	clear: none;
-	color: #f1e6e6;
 	font-size: 10px;
+	background-color: Darkgray;
 }
 
 .linecontent:hover {
 	height: 80%;
 	clear: none;
-	color: #f1e6e6;
+	color: CornSilk;
 	font-size: 20px;
 }
 
@@ -77,8 +74,10 @@ body {
 
 .body {
 	height: 100%;
+	/*
 	background-image: -webkit-linear-gradient(270deg, #28df37, #050404);
 	background-image: linear-gradient(180deg, #28df37, #050404);
+	*/
 }
 
 .filters {
@@ -92,7 +91,7 @@ body {
 .text-title {
 	position: relative;
 	padding-bottom: 5px;
-	color: #faeeee;
+	color: LimeGreen;
 	font-size: 16px;
 	text-align: center;
 }
@@ -107,17 +106,30 @@ body {
 	padding-top: 5px;
 	padding-bottom: 5px;
 	padding-left: 10px;
+	height: 35px;
+	border-radius: 15px;
+	background-color: DarkGray;
 }
 
 .select-filter {
 	width: 100%;
 	padding-right: 10px;
 	padding-left: 10px;
+	display : none;
 }
 
 .text-field-filter {
+	height:80%;
 	width: 70%;
 	float: left;
+	font-size: 16px;
+	color: CornSilk;
+	background-color: DarkGray;
+	border-left:none;
+	border-right:none;
+	border-top: none;
+	border-bottom: solid;
+	
 }
 
 .image {
@@ -130,6 +142,8 @@ body {
 
 .resultContainer {
 	padding-top: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
 	position: relative;
 	left: 0px;
 	right: 0px;
@@ -140,7 +154,8 @@ body {
 
 .contentLineHeader {
 	font-size: 12px;
-	color: white;
+	color: DarkGray;
+	text-align: center;
 }
 
 .content {
@@ -152,13 +167,17 @@ body {
 }
 
 .contentTable {
-	width: 100%;
+	width: 95%;
 }
 
 .subtitle {
 	font-size: 16px;
 	text-align: left;
-	color: white;
+	color: LimeGreen;
+	-webkit-margin-before: 0px;
+    -webkit-margin-after: 0px;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
 }
 
 .configcontainer {
@@ -170,7 +189,7 @@ body {
 	padding-top: 5px;
 }
 
-.section-2 {
+.configFilterContainer {
 	height: 90%;
 	padding-left: 5px;
 }
@@ -193,12 +212,10 @@ body {
 	padding-left: 15px;
 }
 
-.tipoproductocontainer {
+.selectorContainer {
 	padding-left: 15px;
-}
-
-.mercadoselectorcontainer {
-	padding-left: 15px;
+	border-radius: 15px;
+	background-color: DarkGrey;
 }
 
 .closeConfigButtonContainer {
@@ -217,4 +234,8 @@ body {
 	font-size: 16px;
 	display : none;
 	z-index: 100;
+}
+
+.configLabel {
+	color: CornSilk;
 }

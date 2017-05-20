@@ -47,8 +47,10 @@ body {
     padding:0px;
     height:100%;
     width:100%;
+    /*
     background-image: -webkit-linear-gradient(270deg, rgba(8, 168, 45, .77), #454d42);
     background-image: linear-gradient(180deg, rgba(8, 168, 45, .77), #454d42);
+    */
 }
 
 /* Portrait layout (default) */
@@ -87,7 +89,6 @@ h1 {
 .event {
     border-radius:4px;
     -webkit-border-radius:4px;
-    color:#FFFFFF;
     font-size:12px;
     margin:0px 30px;
     padding:2px 0px;

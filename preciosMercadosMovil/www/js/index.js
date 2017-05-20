@@ -17,6 +17,10 @@
  * under the License.
  */
 var app = {
+		
+		
+	//host : "http://34.204.253.238:8080",
+		host : "http://localhost:8080",
 
 	// Application Constructor
 	initialize : function() {
@@ -30,6 +34,7 @@ var app = {
 	// 'pause', 'resume', etc.
 	onDeviceReady : function() {
 		// this.receivedEvent('deviceready');
+		loadMarkets();
 
 		searchButton = document.getElementById("searchButton");
 		searchButton.addEventListener('click', this.searchButtonClick, false);
@@ -89,9 +94,85 @@ var app = {
 
 app.initialize();
 
+function loadProductTypes(){
+	
+}
+
+function loadMarkets(){
+	var response = "";
+	var url = app.host + "/concentrador/rest/quotation/listMarket";
+	var xhr = new XMLHttpRequest();
+	localstorage = window.localStorage;
+	xhr.onreadystatechange = function() {
+		if (xhr.readyState === 4) {
+			if (xhr.status === 200) {
+				lista = JSON.parse(this.responseText);
+				for (i = 0; i < lista.length; i++) {
+					localstorage.setItem(lista[i].id, lista[i].description);
+				}
+				
+			} else {
+				container.innerHTML = xhr.statusText;
+			}
+		}
+	};
+	try {
+		xhr.open('GET', url, true);
+		xhr.send();
+	} catch (err) {
+		container.innerHTML = err.message;
+	}
+}
+
+function loadProducts(){
+	var response = "";
+	var url = app.host + "/concentrador/rest/quotation/listProducts";
+	var xhr = new XMLHttpRequest();
+	localstorage = window.localStorage;
+	xhr.onreadystatechange = function() {
+		if (xhr.readyState === 4) {
+			if (xhr.status === 200) {
+				lista = JSON.parse(this.responseText);
+				localstorage.setItem("products", lista);
+			} else {
+				container.innerHTML = xhr.statusText;
+			}
+		}
+	};
+	try {
+		xhr.open('GET', url, true);
+		xhr.send();
+	} catch (err) {
+		container.innerHTML = err.message;
+	}
+}
+
+
+function loadFilters(container) {
+	var response = "";
+	var url = app.host + "/concentrador/rest/quotation/listCodes";
+	var xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = function() {
+		if (xhr.readyState === 4) {
+			if (xhr.status === 200) {
+				lista = JSON.parse(this.responseText);
+				drawFilters(lista, container);
+			} else {
+				container.innerHTML = xhr.statusText;
+			}
+		}
+	};
+	try {
+		xhr.open('GET', url, true);
+		xhr.send();
+	} catch (err) {
+		container.innerHTML = err.message;
+	}
+}
+
 function fillFilters(container) {
 	var response = "";
-	var url = "http://34.204.253.238:8080/concentrador/rest/quotation/listCodes";
+	var url = app.host + "/concentrador/rest/quotation/listCodes";
 	var xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState === 4) {
@@ -113,14 +194,14 @@ function fillFilters(container) {
 
 function callRestService(container, value) {
 	var response = "";
-	var url = "http://34.204.253.238:8080/concentrador/rest/quotation/byFilter/"
+	var url = app.host + "/concentrador/rest/quotation/byFilter/"
 			+ value;
 	var xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState === 4) {
 			if (xhr.status === 200) {
 				lista = JSON.parse(this.responseText);
-				visualization(lista, container);
+				drawServiceResult(lista, container);
 			} else {
 				container.innerHTML = xhr.statusText;
 			}
@@ -150,7 +231,7 @@ function callPostService(container, value) {
 			}
 		}
 	}
-	
+
 	var productTypes = JSON.parse(localstorage.getItem("products"));
 	if (productTypes != null) {
 		var productTypesList = productTypes.productTypes;
@@ -161,24 +242,23 @@ function callPostService(container, value) {
 			}
 		}
 	}
-	
-	//params.products = paramProducts;
-	var paramsContainer = [];
+
+	// params.products = paramProducts;
 	var params = {};
+	var quote = {};
+	quote.code = value;
+	params.quotes = quote;
 	params.products = paramProducts;
 	params.markets = paramMarkets;
-	params.code = value;
-	paramsContainer.push(params);
 	var xhr = new XMLHttpRequest();
-	var url = "http://localhost:8080/concentrador/rest/quotation/byProductsMarketsValue";
-	//var url = "http://34.204.253.238:8080/concentrador/rest/quotation/byProductsMarketsValue";
-	// Send the proper header information along with the request
+	var url = app.host + "/concentrador/rest/quotation/byFilter";
 	var response = "";
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState === 4) {
 			if (xhr.status === 200) {
+				console.log(JSON.stringify(this.responseText));
 				lista = JSON.parse(this.responseText);
-				visualization(lista, container);
+				drawServiceResult(lista, container);
 			} else {
 				container.innerHTML = xhr.statusText;
 			}
@@ -186,31 +266,35 @@ function callPostService(container, value) {
 	};
 	try {
 		xhr.open("POST", url, true);
-		xhr.setRequestHeader("Content-type", "application/json; charset=ISO-8859-1");
-		//xhr.setRequestHeader("Content-length", params.length);
-		//xhr.setRequestHeader("Connection", "close");
-		console.log(JSON.stringify(paramsContainer));
-		xhr.send(JSON.stringify(paramsContainer));
+		xhr.setRequestHeader("Content-type",
+				"application/json; charset=ISO-8859-1");
+		console.log(JSON.stringify(params));
+		xhr.send(JSON.stringify(params));
 	} catch (err) {
 		container.innerHTML = err.message;
 	}
 };
 
-function visualization(arr, element) {
+function drawNoSelectionResult(element) {
+	element.innerHTML = "No se encuentran configuraciones.";
+}
+
+function drawServiceResult(arr, element) {
+	localstorage = window.localStorage;
 	while (element.firstChild) {
 		element.removeChild(element.firstChild);
 	}
 
-	mercado = "";
+	var mercado = "";
 
 	/* Contenido */
 	for (i = 0; i < arr.length; i++) {
 		if (arr[i].market != mercado) {
 			h2 = document.createElement("h2");
-			h2Content = document.createTextNode(arr[i].market);
+			mercado = arr[i].market;
+			h2Content = document.createTextNode(localstorage.getItem(arr[i].market));
 			h2.appendChild(h2Content);
 			h2.setAttribute('class', 'subtitle');
-			mercado = arr[i].market;
 			element.appendChild(h2);
 
 			var table = document.createElement("TABLE");
@@ -267,8 +351,6 @@ function visualization(arr, element) {
 
 		line = document.createElement("TR");
 		line.setAttribute('class', 'linecontent');
-		//line.setAttribute('onmouseleave', 'this.style.fontSize = "10px"');
-		//line.setAttribute('onmouseover', 'this.style.fontSize = "20px"');
 		table.appendChild(line);
 
 		td1 = document.createElement("TD");
@@ -364,16 +446,23 @@ function loadPreferences() {
 		var marketsList = markets.markets;
 		for (i = 0; i < marketsList.length; i++) {
 			market = marketsList[i];
-			document.getElementById("checkbox" + market.id).checked = (market.checked == true);
+			var pageConfiguration = document.getElementById("checkbox"
+					+ market.id);
+			if (pageConfiguration != null) {
+				pageConfiguration.checked = (market.checked == true);
+			}
 		}
 	}
-	
+
 	var productTypes = JSON.parse(localstorage.getItem("products"));
 	if (productTypes != null) {
 		var productTypesList = productTypes.productTypes;
 		for (i = 0; i < productTypesList.length; i++) {
 			product = productTypesList[i];
-			document.getElementById("checkbox" + product.id).checked = (product.checked == true);
+			var pageConfiguration = document.getElementById("checkbox"+ product.id);
+			if (pageConfiguration != null) {
+				pageConfiguration.checked = (product.checked == true);
+			}
 		}
 	}
 }

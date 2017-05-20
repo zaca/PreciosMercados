@@ -1,20 +1,16 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.madmax.preciosMercados" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.madmax.preciosMercados" version="2.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>PreciosMercados</name>
     <description>
 		Busqueda de precios en distintos mercados centrales del pais.
 	</description>
-    <author email="dev@cordova.apache.org" href="http://cordova.io">
-		Zacarias www.itArchitecturalNotes.com
+    <author email="contact@farmDomotics.com" href="http://cordova.io">
+		Zacarias www.farmDomotics.com
 	</author>
     <content src="index.html" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
-    <allow-intent href="tel:*" />
-    <allow-intent href="sms:*" />
-    <allow-intent href="mailto:*" />
-    <allow-intent href="geo:*" />
     <platform name="android">
         <allow-intent href="market:*" />
         <icon density="ldpi" src="www/img/icon.png" />

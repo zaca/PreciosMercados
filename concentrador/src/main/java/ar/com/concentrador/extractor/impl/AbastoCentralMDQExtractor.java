@@ -17,7 +17,7 @@ import ar.com.concentrador.model.Quotes;
 
 public class AbastoCentralMDQExtractor extends BaseExtractor {
 	public static final String CODE_MARKET = "MDQ";
-	public static final String NAME_MARKET = "Abasto Centrol de la Ciudad de Mar del Plata";
+	public static final String NAME_MARKET = "Abasto Central de la Ciudad de Mar del Plata";
 	private static final String URL = "http://www.abastocentralmdp.com/lista.php?id_rubro=%s";
 	
 	private static final char[] CHAR_TO_REMOVE = {'$', '-'}; 
@@ -60,8 +60,8 @@ public class AbastoCentralMDQExtractor extends BaseExtractor {
 	            q.setSource(formatDescriptionValue(tds.get(1).text()));
 	            q.setPackageDes(formatDescriptionValue(tds.get(2).text()));
 	            q.setValue(formatDescriptionValue(tds.get(3).text()));
-	            q.setMaxValue(formatMoneyValue(tds.get(4).text(), CHAR_TO_REMOVE));
-	            q.setMinValue(formatMoneyValue(tds.get(5).text(), CHAR_TO_REMOVE));
+	            q.setMinValue(formatMoneyValue(tds.get(4).text(), CHAR_TO_REMOVE));
+	            q.setMaxValue(formatMoneyValue(tds.get(5).text(), CHAR_TO_REMOVE));
 	            q.setDiff(new BigDecimal(0));
 	            
 	            information.add(q);
