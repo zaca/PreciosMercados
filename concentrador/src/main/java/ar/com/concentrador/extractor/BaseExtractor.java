@@ -5,7 +5,9 @@ import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.Normalizer;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
@@ -24,12 +26,37 @@ public abstract class BaseExtractor {
 	protected final ProductTypes productType;
 
 	public abstract String getMarket();
+	public abstract String getName();
 	public abstract List<Quotes> getQuotes();
+	
+	protected Map<String, String> mapPackage;
 	
 	protected BaseExtractor(String codeExtractor, String urlParam, ProductTypes pt){
 		this.codeExtractor = codeExtractor;
 		this.urlParam = urlParam;
 		this.productType = pt;
+		
+		this.mapPackage = new HashMap<>();
+		this.mapPackage.put("AP", "ARGEN-POOL");
+		this.mapPackage.put("A", "ATADO");
+		this.mapPackage.put("BA", "BANDEJA");
+		this.mapPackage.put("BO", "BOLSA");
+		this.mapPackage.put("CA", "CAJA");
+		this.mapPackage.put("CJ", "CAJON");
+		this.mapPackage.put("CT", "CAJA/Telescop");
+		this.mapPackage.put("GR", "GRANEL");
+		this.mapPackage.put("IF", "IFCO");
+		this.mapPackage.put("JA", "JAULA");
+		this.mapPackage.put("MA", "MARK 4");
+		this.mapPackage.put("PE", "PERDIDO");
+		this.mapPackage.put("PL", "PLAFOM");
+		this.mapPackage.put("PQ", "PAQUETE");
+		this.mapPackage.put("RT", "RISTRA 100");
+		this.mapPackage.put("SM", "SAN MARTIN");
+		this.mapPackage.put("ST", "STANDARTD");
+		this.mapPackage.put("SU", "SUDAFRICANO");
+		this.mapPackage.put("TO", "TORO");
+		this.mapPackage.put("TT", "TORITO");
 	}
 	
 	public String getCodeExtractor(){
@@ -74,6 +101,10 @@ public abstract class BaseExtractor {
 		return q;
 	}
 	
+	protected String formatPackage(String code) {
+		return formatDescriptionValue(this.mapPackage.get(code));
+	}
+	
 	protected static String formatCodeValue(String value) {
 		if (value == null) {
 			value = "";
@@ -95,9 +126,9 @@ public abstract class BaseExtractor {
 		return sb.toString().toUpperCase().trim();
 	}	
 	
-	protected static BigDecimal formatMoneyValue(String value, char[] toRemove) {
+	protected static BigDecimal formatMoneyValue(String value, char[] toRemove, String replace) {
 		for (int i = 0; i < toRemove.length; i++) {
-			value = value.replace( "" + toRemove[i], "");
+			value = value.replace( "" + toRemove[i], replace);
 		}
 		
 		if ("".equals(value.trim())) {
@@ -105,5 +136,9 @@ public abstract class BaseExtractor {
 		}
 		
 		return new BigDecimal(value);
+	}
+	
+	protected static BigDecimal formatMoneyValue(String value, char[] toRemove) {
+		return formatMoneyValue(value, toRemove, "");
 	}
 }

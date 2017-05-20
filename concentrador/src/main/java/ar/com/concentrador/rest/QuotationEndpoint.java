@@ -20,8 +20,6 @@ import org.slf4j.Logger;
 import ar.com.concentrador.bo.QuotesBO;
 import ar.com.concentrador.enums.ProductTypes;
 import ar.com.concentrador.extractor.BaseExtractor;
-import ar.com.concentrador.extractor.impl.AbastoCentralMDQExtractor;
-import ar.com.concentrador.extractor.impl.MecadoCentralBSASExtractor;
 import ar.com.concentrador.model.FilterQuotes;
 import ar.com.concentrador.model.Quotes;
 
@@ -34,6 +32,9 @@ public class QuotationEndpoint {
 	
 	@Inject
 	private QuotesBO quotesBO;
+	
+	@Inject
+	private Map<String, String> marketList;
 	
 	@POST
 	@Path("/byFilter")
@@ -52,11 +53,7 @@ public class QuotationEndpoint {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=ISO-8859-1")
 	public Response listMarket() {
 		try {
-			Map<String, String> map = new HashMap<>();
-			map.put(MecadoCentralBSASExtractor.CODE_MARKET, "Mercado Central de BsAs");
-			map.put(AbastoCentralMDQExtractor.CODE_MARKET, "Mercado de Mar del Plata");
-			
-			return Response.ok(map).build();
+			return Response.ok(this.marketList).build();
 		} catch (Exception e) {
 			logger.error("Error al recuperar codigos de Mercados.", e);
 			return Response.serverError().build();
@@ -91,7 +88,7 @@ public class QuotationEndpoint {
 		}		
 	}
 
-	private Response byFilter(Quotes q, List<String> products,List<String> markets) {
+	private Response byFilter(Quotes q, List<String> products, List<String> markets) {
 		try {
 			q.setCode( BaseExtractor.deAccent(q.getCode()));
 			

@@ -1,7 +1,9 @@
 package ar.com.concentrador.factory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
@@ -11,6 +13,7 @@ import ar.com.concentrador.enums.ProductTypes;
 import ar.com.concentrador.extractor.BaseExtractor;
 import ar.com.concentrador.extractor.impl.AbastoCentralMDQExtractor;
 import ar.com.concentrador.extractor.impl.MecadoCentralBSASExtractor;
+import ar.com.concentrador.extractor.impl.MinisterioAgroindustriaGOBExtractor;
 
 @Singleton
 public class ExtractorsFactory {
@@ -27,6 +30,21 @@ public class ExtractorsFactory {
     	list.add(new AbastoCentralMDQExtractor("03", "2", ProductTypes.VERDURAS));
     	list.add(new AbastoCentralMDQExtractor("04", "3", ProductTypes.HORTALIZAS));
     	
+    	list.add(new MinisterioAgroindustriaGOBExtractor("06", "hortalizas/01_hortalizas_act", ProductTypes.HORTALIZAS));
+    	//TODO: Falta el envase y kg.... esta mal la pagina ??? 
+    	//list.add(new MinisterioAgroindustriaGOBExtractor("07", "frutas/01_frutas_actual", ProductTypes.FRUTAS));
+    	
         return list; 
+    }
+    
+    @Produces
+    @ApplicationScoped
+    public Map<String, String> produceMarketList() {
+		Map<String, String> map = new HashMap<>();
+		map.put(MecadoCentralBSASExtractor.CODE_MARKET, MecadoCentralBSASExtractor.NAME_MARKET);
+		map.put(MinisterioAgroindustriaGOBExtractor.CODE_MARKET, MinisterioAgroindustriaGOBExtractor.NAME_MARKET);
+		map.put(AbastoCentralMDQExtractor.CODE_MARKET, AbastoCentralMDQExtractor.NAME_MARKET);
+
+        return map; 
     }
 }

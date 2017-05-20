@@ -43,39 +43,18 @@ import ar.com.concentrador.model.Quotes;
 
 public class MecadoCentralBSASExtractor extends BaseExtractor {
 	public static final String CODE_MARKET = "BSAS";
+	public static final String NAME_MARKET = "Mercado Central de Buenos Aires";
 	private static final String URL = "http://www.mercadocentral.gob.ar/sites/default/files/%s-%s.zip";
 	
 	private static final int BUFFER = 2048;
 	private static final char[] CHAR_TO_REMOVE = {};
 	
-	private Map<String, String> mapPackage;
+
 	private Map<Integer, String> mapMonth;
 	
 	public MecadoCentralBSASExtractor(String codeExtractor, String urlParam, ProductTypes pt) {
 		super(codeExtractor, urlParam, pt);
 		
-		this.mapPackage = new HashMap<>();
-		this.mapPackage.put("AP", "ARGEN-POOL");
-		this.mapPackage.put("A", "ATADO");
-		this.mapPackage.put("BA", "BANDEJA");
-		this.mapPackage.put("BO", "BOLSA");
-		this.mapPackage.put("CA", "CAJA");
-		this.mapPackage.put("CJ", "CAJON");
-		this.mapPackage.put("CT", "CAJA/Telescop");
-		this.mapPackage.put("GR", "GRANEL");
-		this.mapPackage.put("IF", "IFCO");
-		this.mapPackage.put("JA", "JAULA");
-		this.mapPackage.put("MA", "MARK 4");
-		this.mapPackage.put("PE", "PERDIDO");
-		this.mapPackage.put("PL", "PLAFOM");
-		this.mapPackage.put("PQ", "PAQUETE");
-		this.mapPackage.put("RT", "RISTRA 100");
-		this.mapPackage.put("SM", "SAN MARTIN");
-		this.mapPackage.put("ST", "STANDARTD");
-		this.mapPackage.put("SU", "SUDAFRICANO");
-		this.mapPackage.put("TO", "TORO");
-		this.mapPackage.put("TT", "TORITO");
-
 		this.mapMonth = new HashMap<>();
 		this.mapMonth.put(1, "Ene");
 		this.mapMonth.put(2, "Feb");
@@ -89,8 +68,13 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 		this.mapMonth.put(10, "Oct");
 		this.mapMonth.put(11, "Nov");
 		this.mapMonth.put(12, "Dic");
-	}
+	}	
 	
+	@Override
+	public String getName() {
+		return NAME_MARKET;
+	}
+
 	@Override
 	public String getMarket() {
 		return CODE_MARKET;
@@ -187,10 +171,6 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 		}
 		
 		return data;
-	}
-
-	private String formatPackage(String code) {
-		return formatDescriptionValue(this.mapPackage.get(code));
 	}
 
 	private static String formatValueFromCell(Cell cell) {

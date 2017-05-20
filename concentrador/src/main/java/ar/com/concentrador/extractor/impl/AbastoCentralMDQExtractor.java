@@ -17,6 +17,7 @@ import ar.com.concentrador.model.Quotes;
 
 public class AbastoCentralMDQExtractor extends BaseExtractor {
 	public static final String CODE_MARKET = "MDQ";
+	public static final String NAME_MARKET = "Abasto Centrol de la Ciudad de Mar del Plata";
 	private static final String URL = "http://www.abastocentralmdp.com/lista.php?id_rubro=%s";
 	
 	private static final char[] CHAR_TO_REMOVE = {'$', '-'}; 
@@ -24,6 +25,11 @@ public class AbastoCentralMDQExtractor extends BaseExtractor {
 	
 	public AbastoCentralMDQExtractor(String codeExtractor, String urlParam, ProductTypes pt) {
 		super(codeExtractor, urlParam, pt);
+	}
+	
+	@Override
+	public String getName() {
+		return NAME_MARKET;
 	}
 	
 	@Override
