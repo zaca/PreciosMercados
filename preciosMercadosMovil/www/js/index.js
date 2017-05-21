@@ -17,10 +17,9 @@
  * under the License.
  */
 var app = {
-		
-		
-	//host : "http://34.204.253.238:8080",
-		host : "http://localhost:8080",
+
+	// host : "http://34.204.253.238:8080",
+	host : "http://localhost:8080",
 
 	// Application Constructor
 	initialize : function() {
@@ -35,17 +34,25 @@ var app = {
 	onDeviceReady : function() {
 		// this.receivedEvent('deviceready');
 		loadMarkets();
+		loadProductTypes()
 
-		searchButton = document.getElementById("searchButton");
+		var searchButton = document.getElementById("searchButton");
 		searchButton.addEventListener('click', this.searchButtonClick, false);
 
-		configButton = document.getElementById("configButton");
+		var textInput = document.getElementById("filterText");
+		textInput.addEventListener('onFocus', this
+				.textFilterSelectContent(this), false);
+		textInput.addEventListener('onClick', this
+				.textFilterSelectContent(this), false);
+		textInput.addEventListener('keydown', this.nextKeyPressed);
+
+		var configButton = document.getElementById("configButton");
 		configButton.addEventListener('click', this.configButtonClick, false);
 
-		filterContainer = document.getElementById("filtersSelectContainer");
+		var filterContainer = document.getElementById("filtersSelectContainer");
 		fillFilters(filterContainer);
 
-		closeConfigButton = document.getElementById("closeConfigButton");
+		var closeConfigButton = document.getElementById("closeConfigButton");
 		closeConfigButton.addEventListener('click',
 				this.closeConfigButtonClick, false);
 
@@ -79,6 +86,21 @@ var app = {
 		config.style.display = "block";
 	},
 
+	textFilterSelectContent : function() {
+		document.getElementById("filterText").select();
+	},
+
+	nextKeyPressed : function(event) {
+		if (event.keyCode == 9) {
+			// you got tab i.e "NEXT" Btn
+			app.searchButtonClick();
+		}
+		if (event.keyCode == 13) {
+			// you got enter i.e "GO" Btn
+			app.searchButtonClick();
+		}
+	},
+
 	closeConfigButtonClick : function() {
 		principal = document.getElementById("principal");
 		config = document.getElementById("configContainer");
@@ -94,11 +116,26 @@ var app = {
 
 app.initialize();
 
-function loadProductTypes(){
-	
+function drawMarketSelector(id, description) {
+	var selectorContainer = document.getElementById("marketsSelectorContainer");
+	selectorContainer.innerHTML = selectorContainer.innerHTML
+			+ "<div><input value='" + id + "' id='checkbox" + id
+			+ "' name='checkboxMercados' type='checkbox'>"
+			+ "<label id='labelcheckbox" + id + "' for='checkbox" + id
+			+ "' class='configLabel'>" + description + "</label></div>"
 }
 
-function loadMarkets(){
+function drawProductSelector(id, description) {
+	var selectorContainer = document
+			.getElementById("productsSelectorContainer");
+	selectorContainer.innerHTML = selectorContainer.innerHTML
+			+ "<div><input value='" + id + "' id='checkbox" + id
+			+ "' name='checkboxProductos' type='checkbox'>"
+			+ "<label id='labelcheckbox" + id + "' for='checkbox" + id
+			+ "' class='configLabel'>" + description + "</label></div>"
+}
+
+function loadMarkets() {
 	var response = "";
 	var url = app.host + "/concentrador/rest/quotation/listMarket";
 	var xhr = new XMLHttpRequest();
@@ -106,11 +143,13 @@ function loadMarkets(){
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState === 4) {
 			if (xhr.status === 200) {
-				lista = JSON.parse(this.responseText);
+				var lista = JSON.parse(this.responseText);
+				localstorage.setItem("marketsServerList", lista);
 				for (i = 0; i < lista.length; i++) {
 					localstorage.setItem(lista[i].id, lista[i].description);
+					drawMarketSelector(lista[i].id, lista[i].description);
 				}
-				
+
 			} else {
 				container.innerHTML = xhr.statusText;
 			}
@@ -124,16 +163,21 @@ function loadMarkets(){
 	}
 }
 
-function loadProducts(){
+function loadProductTypes() {
 	var response = "";
-	var url = app.host + "/concentrador/rest/quotation/listProducts";
+	var url = app.host + "/concentrador/rest/quotation/listProductTypes";
 	var xhr = new XMLHttpRequest();
 	localstorage = window.localStorage;
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState === 4) {
 			if (xhr.status === 200) {
-				lista = JSON.parse(this.responseText);
-				localstorage.setItem("products", lista);
+				var lista = JSON.parse(this.responseText);
+				localstorage.setItem("productsServerList", lista);
+				for (i = 0; i < lista.length; i++) {
+					localstorage.setItem(lista[i].id, lista[i].description);
+					drawProductSelector(lista[i].id, lista[i].description);
+				}
+
 			} else {
 				container.innerHTML = xhr.statusText;
 			}
@@ -146,7 +190,6 @@ function loadProducts(){
 		container.innerHTML = err.message;
 	}
 }
-
 
 function loadFilters(container) {
 	var response = "";
@@ -194,8 +237,7 @@ function fillFilters(container) {
 
 function callRestService(container, value) {
 	var response = "";
-	var url = app.host + "/concentrador/rest/quotation/byFilter/"
-			+ value;
+	var url = app.host + "/concentrador/rest/quotation/byFilter/" + value;
 	var xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState === 4) {
@@ -292,7 +334,8 @@ function drawServiceResult(arr, element) {
 		if (arr[i].market != mercado) {
 			h2 = document.createElement("h2");
 			mercado = arr[i].market;
-			h2Content = document.createTextNode(localstorage.getItem(arr[i].market));
+			h2Content = document.createTextNode(localstorage
+					.getItem(arr[i].market));
 			h2.appendChild(h2Content);
 			h2.setAttribute('class', 'subtitle');
 			element.appendChild(h2);
@@ -390,23 +433,10 @@ function drawFilters(arr, element) {
 	element.appendChild(select);
 };
 
-function lineTouched(aumentedTr) {
-	aumentedTr.style.fontSize = "20px";
-}
-
-function lineUnTouched(aumentedTr) {
-	aumentedTr.style.fontSize = "16px";
-}
-
-function createAumentedLine(line, reg, i) {
-	element = document.createElement("DIV");
-	element.setAttribute('id', 'aumentedDiv' + i);
-	element.setAttribute('class', 'aumentedDiv');
-	elementContent = document.createTextNode("Descripcion: " + reg.description);
-	element.appendChild(elementContent);
-	line.appendChild(element);
-}
-
+/**
+ * Lee las configuraciones de la pantalla y las graba en el localstorage.
+ * Se graban cada vez que sale de la pantalla.
+ */
 function savePreferences() {
 	localstorage = window.localStorage;
 	productos = document.getElementsByName("checkboxProductos");
@@ -417,7 +447,6 @@ function savePreferences() {
 		labelProd = document.getElementById("label" + productos[e].id);
 		prods.productTypes.push({
 			"id" : productos[e].value,
-			"description" : labelProd.innerHTML,
 			"checked" : productos[e].checked
 		});
 	}
@@ -431,7 +460,6 @@ function savePreferences() {
 		labelMercado = document.getElementById("label" + mercados[e].id);
 		markets.markets.push({
 			"id" : mercados[e].value,
-			"description" : labelMercado.innerHTML,
 			"checked" : mercados[e].checked
 		});
 	}
@@ -439,30 +467,47 @@ function savePreferences() {
 	localstorage.setItem("markets", JSON.stringify(markets));
 }
 
+/**
+ * Carga las preferencias del localstorage y tilda las configuraciones
+ * Cualquier error en la lectura de las variables del localstorage las borra
+ * (una independiente de la otra) con el fin de evitar errores por cambios 
+ * de version.
+ */
 function loadPreferences() {
 	localstorage = window.localStorage;
-	var markets = JSON.parse(localstorage.getItem("markets"));
-	if (markets != null) {
-		var marketsList = markets.markets;
-		for (i = 0; i < marketsList.length; i++) {
-			market = marketsList[i];
-			var pageConfiguration = document.getElementById("checkbox"
-					+ market.id);
-			if (pageConfiguration != null) {
-				pageConfiguration.checked = (market.checked == true);
+	var markets = {};
+	try {
+		markets = JSON.parse(localstorage.getItem("markets"));
+		if (markets != null) {
+			var marketsList = markets.markets;
+			for (i = 0; i < marketsList.length; i++) {
+				market = marketsList[i];
+				var pageConfiguration = document.getElementById("checkbox"
+						+ market.id);
+				if (pageConfiguration != null) {
+					pageConfiguration.checked = (market.checked == true);
+				}
 			}
 		}
+	} catch (err) {
+		localstorage.removeItem("markets");
 	}
 
-	var productTypes = JSON.parse(localstorage.getItem("products"));
-	if (productTypes != null) {
-		var productTypesList = productTypes.productTypes;
-		for (i = 0; i < productTypesList.length; i++) {
-			product = productTypesList[i];
-			var pageConfiguration = document.getElementById("checkbox"+ product.id);
-			if (pageConfiguration != null) {
-				pageConfiguration.checked = (product.checked == true);
+	var productTypes = {};
+	try {
+		productTypes = JSON.parse(localstorage.getItem("products"));
+		if (productTypes != null) {
+			var productTypesList = productTypes.productTypes;
+			for (i = 0; i < productTypesList.length; i++) {
+				product = productTypesList[i];
+				var pageConfiguration = document.getElementById("checkbox"
+						+ product.id);
+				if (pageConfiguration != null) {
+					pageConfiguration.checked = (product.checked == true);
+				}
 			}
 		}
+	} catch (err) {
+		localstorage.removeItem("products");
 	}
 }
