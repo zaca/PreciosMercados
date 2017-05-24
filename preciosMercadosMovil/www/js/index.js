@@ -18,8 +18,8 @@
  */
 var app = {
 
-	// host : "http://34.204.253.238:8080",
-	host : "http://localhost:8080",
+	host : "http://34.204.253.238:8080",
+	//host : "http://localhost:8080",
 
 	// Application Constructor
 	initialize : function() {
@@ -38,16 +38,19 @@ var app = {
 
 		var searchButton = document.getElementById("searchButton");
 		searchButton.addEventListener('click', this.searchButtonClick, false);
-
+/*
 		var textInput = document.getElementById("filterText");
 		textInput.addEventListener('onFocus', this
 				.textFilterSelectContent(this), false);
 		textInput.addEventListener('onClick', this
 				.textFilterSelectContent(this), false);
 		textInput.addEventListener('keydown', this.nextKeyPressed);
+		$('#filterText').focus( this.textFilterSelectContent($('#filterText')));
+ */	
+		$('#filterText').click(this.textFilterSelectContent($('#filterText')));
+		$('#filterText').keydown(this.nextKeyPressed);
 
-		var configButton = document.getElementById("configButton");
-		configButton.addEventListener('click', this.configButtonClick, false);
+		$('#configButton').click(this.configButtonClick);
 
 		var filterContainer = document.getElementById("filtersSelectContainer");
 		fillFilters(filterContainer);
@@ -86,8 +89,9 @@ var app = {
 		config.style.display = "block";
 	},
 
-	textFilterSelectContent : function() {
-		document.getElementById("filterText").select();
+	textFilterSelectContent : function(element) {
+		console.log(element.value);
+		element.select();
 	},
 
 	nextKeyPressed : function(event) {
@@ -136,31 +140,13 @@ function drawProductSelector(id, description) {
 }
 
 function loadMarkets() {
-	var response = "";
-	var url = app.host + "/concentrador/rest/quotation/listMarket";
-	var xhr = new XMLHttpRequest();
-	localstorage = window.localStorage;
-	xhr.onreadystatechange = function() {
-		if (xhr.readyState === 4) {
-			if (xhr.status === 200) {
-				var lista = JSON.parse(this.responseText);
-				localstorage.setItem("marketsServerList", lista);
+         $.getJSON(app.host + "/concentrador/rest/quotation/listMarket",function(lista) {
+        	 localstorage.setItem("marketsServerList", lista);
 				for (i = 0; i < lista.length; i++) {
 					localstorage.setItem(lista[i].id, lista[i].description);
 					drawMarketSelector(lista[i].id, lista[i].description);
-				}
-
-			} else {
-				container.innerHTML = xhr.statusText;
-			}
-		}
-	};
-	try {
-		xhr.open('GET', url, true);
-		xhr.send();
-	} catch (err) {
-		container.innerHTML = err.message;
-	}
+				}         
+          });
 }
 
 function loadProductTypes() {

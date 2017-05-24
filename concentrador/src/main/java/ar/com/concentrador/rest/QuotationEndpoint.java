@@ -1,10 +1,7 @@
 package ar.com.concentrador.rest;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -24,6 +21,7 @@ import ar.com.concentrador.enums.ProductTypes;
 import ar.com.concentrador.extractor.BaseExtractor;
 import ar.com.concentrador.model.FilterQuotes;
 import ar.com.concentrador.model.Market;
+import ar.com.concentrador.model.ProductType;
 import ar.com.concentrador.model.Quotes;
 
 @Stateless
@@ -80,9 +78,9 @@ public class QuotationEndpoint {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=ISO-8859-1")
 	public Response listProductTypes() {
 		try {
-			Map<String,String> tmp = new HashMap<>();
+			List<ProductType> tmp = new ArrayList<>();
 		    for(ProductTypes type : ProductTypes.values()){
-		        tmp.put(type.getId(), type.getDescripcion());
+		        tmp.add(new ProductType(type.getId(), type.getDescripcion()));
 		    }
 			return Response.ok(tmp).build();
 		} catch (Exception e) {

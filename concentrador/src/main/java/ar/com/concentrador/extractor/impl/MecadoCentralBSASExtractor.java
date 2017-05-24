@@ -107,7 +107,9 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 				Quotes q = createQuotes();
 				q.setDate(date);
 				q.setProductType(this.productType.getId());
-				q.setCode(formatCodeValue(formatValueFromCell(nextRow.getCell(initCol)) + " " + formatValueFromCell(nextRow.getCell(initCol + 1))));
+				q.setCode(formatCodeValue(formatValueFromCell(nextRow.getCell(initCol)) + " " 
+						+ formatValueFromCell(nextRow.getCell(initCol + 1)) + " " 
+						+ formatValueFromCell(nextRow.getCell(initCol + 7))));
 				q.setSource(formatDescriptionValue(formatValueFromCell(nextRow.getCell(initCol + 2))));
 				q.setPackageDes(this.formatPackage(formatValueFromCell(nextRow.getCell(initCol + 3))));
 				q.setValue(formatDescriptionValue(formatValueFromCell(nextRow.getCell(initCol + 4)).replace(".0", "")));
