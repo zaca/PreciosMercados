@@ -53,7 +53,7 @@ public class MinisterioAgroindustriaGOBExtractor extends BaseExtractor {
         for (Element row : table.select("tr:gt(2)")) {
             Elements tds = row.select("td");
             
-            Quotes q = createQuotes();
+            Quotes q = new Quotes();
             q.setDate(date);
             q.setProductType(this.productType.getId());
             q.setCode(formatCodeValue(tds.get(0).text() + " " + tds.get(1).text()));
@@ -70,7 +70,7 @@ public class MinisterioAgroindustriaGOBExtractor extends BaseExtractor {
             q.setDescription(formatDescriptionValue(q.getCode(), q.getPackageDes(), q.getValue()));
             q.setDiff(formatMoneyValue(tds.get(10).text(), CHAR_TO_REMOVE));    
            
-            information.add(q);
+            information.add(this.completeQuotes(q));
         }
 	    		
 		

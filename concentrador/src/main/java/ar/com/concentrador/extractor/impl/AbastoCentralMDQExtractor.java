@@ -52,7 +52,7 @@ public class AbastoCentralMDQExtractor extends BaseExtractor {
 	        for (Element row : table.select("tr")) {
 	            Elements tds = row.select("td");
 	            
-	            Quotes q = createQuotes();
+	            Quotes q = new Quotes();
 	            q.setDate(date);
 	            q.setProductType(this.productType.getId());
 	            q.setCode(formatCodeValue(tds.get(0).text()));
@@ -64,7 +64,7 @@ public class AbastoCentralMDQExtractor extends BaseExtractor {
 	            q.setMaxValue(formatMoneyValue(tds.get(5).text(), CHAR_TO_REMOVE));
 	            q.setDiff(new BigDecimal(0));
 	            
-	            information.add(q);
+	            information.add(this.completeQuotes(q));
 	        }
 	    }		
 		

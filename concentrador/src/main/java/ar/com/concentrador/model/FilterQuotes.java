@@ -6,7 +6,7 @@ public class FilterQuotes {
 	
 	private List<String> products;
 	private List<String> markets;
-	
+	private String predictiveSearch;
 	private Quotes quotes;
 	
 	public Quotes getQuotes() {
@@ -26,5 +26,11 @@ public class FilterQuotes {
 	}
 	public void setMarkets(List<String> markets) {
 		this.markets = markets;
-	}	
+	}
+	public String getPredictiveSearch() {
+		return predictiveSearch;
+	}
+	public void setPredictiveSearch(String predictiveSearch) {
+		this.predictiveSearch = predictiveSearch;
+	}
 }

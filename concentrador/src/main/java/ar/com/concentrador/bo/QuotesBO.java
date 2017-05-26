@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -33,6 +34,23 @@ public class QuotesBO {
 	private Map<String, List<Quotes>> listQuotes;
 
 	private int day = -1;
+	
+	public Object retriveFilterList(String[] toFilters, List<String> markets, List<String> products) {
+		
+		Stream<Quotes> stream = this.getListQuotes().stream();
+		for (String token: toFilters) {
+			if (!"".equals(token.trim())) {
+				stream = stream.filter(b -> b.getCode().contains(token) || b.getPackageDes().contains(token) || b.getValue().contains(token));
+			}
+		}
+		
+		List<Quotes> list = stream
+			.filter(b -> products == null || products.size()==0 || products.contains(b.getProductType()))
+			.filter(b -> markets == null  || markets.size()==0  || markets.contains(b.getMarket()))
+		.collect(Collectors.toList());		
+				
+		return sortList(list);
+	}	
 
 	public Collection<Quotes> retriveFilterList(Quotes filter, List<String> markets, List<String> products) {
 
@@ -45,16 +63,7 @@ public class QuotesBO {
 			.filter(b -> markets == null                || markets.size()==0  			     || markets.contains(b.getMarket()))
 		.collect(Collectors.toList());
 
-		/* Ordena */
-		list.sort(new Comparator<Quotes>() {
-			public int compare(Quotes o1, Quotes o2) {
-				String o1String = o1.getMarket() + o1.getCode();
-				String o2String = o1.getMarket() + o1.getCode();
-				return o1String.compareTo(o2String);
-			}
-		});
-
-		return list;
+		return sortList(list);
 	}
 
 	public Collection<String> retriveListOfCode() {
@@ -155,5 +164,16 @@ public class QuotesBO {
 		BigDecimal divisor = new BigDecimal(2);
 		BigDecimal valueOld = new BigDecimal(0);
 		return valueOld.add(q.getMinValue()).add(q.getMinValue()).divide(divisor); 
+	}
+	
+	private static List<Quotes> sortList(List<Quotes> list) {
+		list.sort(new Comparator<Quotes>() {
+			public int compare(Quotes o1, Quotes o2) {
+				String o1String = o1.getMarket() + o1.getCode();
+				String o2String = o1.getMarket() + o1.getCode();
+				return o1String.compareTo(o2String);
+			}
+		});
+		return list;
 	}
 }

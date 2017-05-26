@@ -94,10 +94,10 @@ public abstract class BaseExtractor {
 		}
 	}
 		
-	protected Quotes createQuotes() {
-		Quotes q = new Quotes();
+	protected Quotes completeQuotes(Quotes q) {
 		q.setMarket(this.getMarket());
 		q.setCodeExtractor(this.getCodeExtractor());
+		q.setAverage(q.getMaxValue().add(q.getMinValue()).divide(new BigDecimal(2)));
 		return q;
 	}
 	
@@ -134,8 +134,12 @@ public abstract class BaseExtractor {
 		if ("".equals(value.trim())) {
 			value = "0";
 		}
-		
-		return new BigDecimal(value);
+
+		try {
+			return new BigDecimal(value);
+		} catch (NumberFormatException n) {
+			return new BigDecimal(0);
+		}
 	}
 	
 	protected static BigDecimal formatMoneyValue(String value, char[] toRemove) {

@@ -13,6 +13,7 @@ public class Quotes {
 	private Date date;
 	private BigDecimal minValue;
 	private BigDecimal maxValue;
+	private BigDecimal average;	
 	private String source;
 	private String packageDes;
 	private String value;
@@ -90,10 +91,18 @@ public class Quotes {
 	public void setDiff(BigDecimal diff) {
 		this.diff = diff;
 	}
+	public BigDecimal getAverage() {
+		return average;
+	}
+	public void setAverage(BigDecimal average) {
+		this.average = average;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((average == null) ? 0 : average.hashCode());
 		result = prime * result + ((code == null) ? 0 : code.hashCode());
 		result = prime * result + ((codeExtractor == null) ? 0 : codeExtractor.hashCode());
 		result = prime * result + ((date == null) ? 0 : date.hashCode());
@@ -108,6 +117,7 @@ public class Quotes {
 		result = prime * result + ((value == null) ? 0 : value.hashCode());
 		return result;
 	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -117,6 +127,11 @@ public class Quotes {
 		if (getClass() != obj.getClass())
 			return false;
 		Quotes other = (Quotes) obj;
+		if (average == null) {
+			if (other.average != null)
+				return false;
+		} else if (!average.equals(other.average))
+			return false;
 		if (code == null) {
 			if (other.code != null)
 				return false;
@@ -179,11 +194,12 @@ public class Quotes {
 			return false;
 		return true;
 	}
+	
 	@Override
 	public String toString() {
 		return "Quotes [market=" + market + ", productType=" + productType + ", codeExtractor=" + codeExtractor
 				+ ", code=" + code + ", description=" + description + ", date=" + date + ", minValue=" + minValue
-				+ ", maxValue=" + maxValue + ", source=" + source + ", packageDes=" + packageDes + ", value=" + value
-				+ ", diff=" + diff + "]";
+				+ ", maxValue=" + maxValue + ", average=" + average + ", source=" + source + ", packageDes="
+				+ packageDes + ", value=" + value + ", diff=" + diff + "]";
 	}	
 }

@@ -46,7 +46,10 @@ public class QuotationEndpoint {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
 		
-		return byFilter(parameters.getQuotes(), parameters.getProducts(), parameters.getMarkets());
+		if (parameters.getPredictiveSearch() != null && !parameters.getPredictiveSearch().isEmpty()) {
+			return byFilter(parameters.getPredictiveSearch(), parameters.getProducts(), parameters.getMarkets());
+		}
+		return byFilter(parameters.getQuotes(), parameters.getProducts(), parameters.getMarkets());		
 	}
 
 	@GET
@@ -91,7 +94,15 @@ public class QuotationEndpoint {
 
 	private Response byFilter(Quotes q, List<String> products, List<String> markets) {
 		try {
-			q.setCode( BaseExtractor.deAccent(q.getCode()));
+			if (q.getCode() != null && !q.getCode().isEmpty()) {
+				q.setCode( BaseExtractor.deAccent(q.getCode().toUpperCase()));
+			}
+			if (q.getPackageDes() != null && !q.getPackageDes().isEmpty()) {
+				q.setPackageDes( BaseExtractor.deAccent(q.getPackageDes().toUpperCase()));
+			}
+			if (q.getValue() != null && !q.getValue().isEmpty()) {
+				q.setValue( BaseExtractor.deAccent(q.getValue().toUpperCase()));
+			}			
 			
 			return Response.ok(quotesBO.retriveFilterList(q, markets, products)).build();
 		} catch (Exception e) {
@@ -99,4 +110,23 @@ public class QuotationEndpoint {
 			return Response.serverError().build();
 		}
 	}
+	
+	private Response byFilter(String predictiveSearch, List<String> products, List<String> markets) {
+		try {
+			String[] toFilters = null;
+			if (predictiveSearch.contains("\"")) {
+				toFilters = predictiveSearch.split("\"");
+			} else {
+				toFilters = predictiveSearch.split(" ");
+			}
+			for (int i = 0; i < toFilters.length; i++) {
+				toFilters[i] = BaseExtractor.deAccent(toFilters[i].toUpperCase());
+			}
+			
+			return Response.ok(quotesBO.retriveFilterList( toFilters, markets, products)).build();
+		} catch (Exception e) {
+			logger.error("Error al recuperar productos por filtro. Filtro: " + predictiveSearch, e);
+			return Response.serverError().build();
+		}
+	}	
 }

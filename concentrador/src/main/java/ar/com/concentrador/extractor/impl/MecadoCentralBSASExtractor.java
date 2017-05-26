@@ -104,7 +104,7 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 				Row nextRow = iterator.next();
 				int initCol = nextRow.getFirstCellNum();
 
-				Quotes q = createQuotes();
+				Quotes q = new Quotes();
 				q.setDate(date);
 				q.setProductType(this.productType.getId());
 				q.setCode(formatCodeValue(formatValueFromCell(nextRow.getCell(initCol)) + " " 
@@ -118,7 +118,7 @@ public class MecadoCentralBSASExtractor extends BaseExtractor {
 				q.setDescription(formatDescriptionValue(q.getCode(), q.getPackageDes(), q.getValue()));
 	            q.setDiff(new BigDecimal(0));
 
-				information.add(q);
+				information.add( this.completeQuotes(q));
 			}
 
 		} catch (Exception e) {
